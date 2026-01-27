@@ -10,16 +10,23 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('https://raw.githubusercontent.com/0xNeffarion/osrsreboxed-db/master/docs/items-complete.json')
-      .then(res => res.json())
-      .then(data => {
-        // Filter to tradeable items only
-        const tradeable = Object.values(data).filter(item =>
-          item.tradeable_on_ge && item.name && !item.noted && !item.placeholder
-        );
+    Promise.all([
+      fetch('https://raw.githubusercontent.com/0xNeffarion/osrsreboxed-db/master/docs/items-complete.json').then(r => r.json()),
+      fetch('https://prices.runescape.wiki/api/v1/osrs/latest').then(r => r.json())
+    ])
+      .then(([itemData, priceData]) => {
+        const prices = priceData.data;
+        // Filter to tradeable items and merge with live GE prices
+        const tradeable = Object.values(itemData)
+          .filter(item => item.tradeable_on_ge && item.name && !item.noted && !item.placeholder)
+          .map(item => ({
+            ...item,
+            ge_price: prices[item.id] ? prices[item.id].high : null
+          }));
         setAllItems(tradeable);
         const randomIndex = Math.floor(Math.random() * tradeable.length);
         setTargetItem(tradeable[randomIndex]);
+        console.log('Answer:', tradeable[randomIndex].name);
         setLoading(false);
       })
       .catch(err => {
@@ -53,7 +60,7 @@ function App() {
   };
 
   const renderGuessRow = (guess) => {
-    const geValue = getIndicator(guess.cost, targetItem.cost);
+    const geValue = getIndicator(guess.ge_price, targetItem.ge_price);
     const weight = getIndicator(guess.weight, targetItem.weight);
     const equipable = guess.equipable_by_player === targetItem.equipable_by_player;
     const buyLimit = getIndicator(guess.buy_limit, targetItem.buy_limit);
@@ -61,9 +68,16 @@ function App() {
 
     return (
       <div key={guess.id} className="guess-row">
-        <div className="cell">{guess.name}</div>
+        <div className="cell item-cell">
+          <img
+            src={`data:image/png;base64,${guess.icon}`}
+            alt={guess.name}
+            className="item-icon"
+          />
+          {guess.name}
+        </div>
         <div className={`cell ${geValue.match ? 'correct' : 'wrong'}`}>
-          {guess.cost?.toLocaleString()} gp {!geValue.match && geValue.arrow}
+          {guess.ge_price?.toLocaleString()} gp {!geValue.match && geValue.arrow}
         </div>
         <div className={`cell ${weight.match ? 'correct' : 'wrong'}`}>
           {guess.weight} kg {!weight.match && weight.arrow}
@@ -116,7 +130,7 @@ function App() {
         {guesses.length > 0 && (
           <div className="guess-table">
             <div className="guess-row header">
-              <div className="cell">Item</div>
+              <div className="cell item-cell">Item</div>
               <div className="cell">GE Value</div>
               <div className="cell">Weight</div>
               <div className="cell">Equipable</div>

@@ -67,6 +67,19 @@
   font-size: 14px;
 }
 
+.item-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 150px;
+}
+
+.item-icon {
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+}
+
 .cell.correct {
   background: #2e7d32;
 }
