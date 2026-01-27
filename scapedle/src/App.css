@@ -88,6 +88,10 @@
   background: #c62828;
 }
 
+.cell.partial {
+  background: #f57c00;
+}
+
 .header .cell {
   background: #555;
   font-weight: bold;

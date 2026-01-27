@@ -62,9 +62,22 @@ function App() {
   const renderGuessRow = (guess) => {
     const geValue = getIndicator(guess.ge_price, targetItem.ge_price);
     const weight = getIndicator(guess.weight, targetItem.weight);
-    const equipable = guess.equipable_by_player === targetItem.equipable_by_player;
     const buyLimit = getIndicator(guess.buy_limit, targetItem.buy_limit);
     const releaseYear = getIndicator(getYear(guess.release_date), getYear(targetItem.release_date));
+
+    const guessSlot = guess.equipment?.slot || null;
+    const targetSlot = targetItem.equipment?.slot || null;
+    let slotClass, slotText;
+    if (guessSlot && targetSlot) {
+      slotClass = guessSlot === targetSlot ? 'correct' : 'partial';
+      slotText = guessSlot;
+    } else if (!guessSlot && !targetSlot) {
+      slotClass = 'correct';
+      slotText = 'No';
+    } else {
+      slotClass = 'wrong';
+      slotText = guessSlot || 'No';
+    }
 
     return (
       <div key={guess.id} className="guess-row">
@@ -82,8 +95,8 @@ function App() {
         <div className={`cell ${weight.match ? 'correct' : 'wrong'}`}>
           {guess.weight} kg {!weight.match && weight.arrow}
         </div>
-        <div className={`cell ${equipable ? 'correct' : 'wrong'}`}>
-          {guess.equipable_by_player ? 'Yes' : 'No'}
+        <div className={`cell ${slotClass}`}>
+          {slotText}
         </div>
         <div className={`cell ${buyLimit.match ? 'correct' : 'wrong'}`}>
           {guess.buy_limit} {!buyLimit.match && buyLimit.arrow}
@@ -133,7 +146,7 @@ function App() {
               <div className="cell item-cell">Item</div>
               <div className="cell">GE Value</div>
               <div className="cell">Weight</div>
-              <div className="cell">Equipable</div>
+              <div className="cell">Slot</div>
               <div className="cell">Buy Limit</div>
               <div className="cell">Released</div>
             </div>
