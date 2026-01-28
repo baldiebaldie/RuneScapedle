@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './App.css';
 
 function App() {
@@ -9,6 +9,7 @@ function App() {
   const [gameWon, setGameWon] = useState(false);
   const [loading, setLoading] = useState(true);
   const [background, setBackground] = useState('');
+  const gameContainerRef = useRef(null);
 
   useEffect(() => {
     const backgrounds = [
@@ -87,6 +88,15 @@ function App() {
         setLoading(false);
       });
   }, []);
+
+  useEffect(() => {
+    if (gameContainerRef.current && guesses.length > 0) {
+      gameContainerRef.current.scrollTo({
+        top: gameContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+  }, [guesses]);
 
   const suggestions = inputValue.length > 1
     ? allItems.filter(item =>
@@ -177,7 +187,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header" style={{ backgroundImage: `url("${background}")`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
-        <div className="game-container">
+        <div className="game-container" ref={gameContainerRef}>
           <h1>Scapedle</h1>
 
           {gameWon ? (
