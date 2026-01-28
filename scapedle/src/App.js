@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
@@ -8,44 +8,19 @@ function App() {
   const [inputValue, setInputValue] = useState('');
   const [gameWon, setGameWon] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [background, setBackground] = useState('');
-  const gameContainerRef = useRef(null);
 
   useEffect(() => {
-    const backgrounds = [
-      'Login_background_(old).png',
-      'Login_background_(Farming).png',
-      'Login_background_(Construction).png',
-      'Login_background_(Hunter).png',
-      'Login_background_(Halloween).png',
-      'Login_background_(Halloween_2019).png',
-      'Login_background_(Christmas_Old).png',
-      'Login_background_(Monkey_Madness_II).png',
-      'Login_background_(Chambers_of_Xeric).png',
-      'Login_background_(The_Inferno).png',
-      'Login_background_(Fossil_Island).png',
-      'Login_background_(Dragon_Slayer_II).png',
-      'Login_background_(Theatre_of_Blood).png',
-      'Login_background_(Kebos_Lowlands).png',
-      'Login_background_(Song_of_the_Elves).png',
-      'Login_background_(Sins_of_the_Father).png',
-      'Login_background_(A_Kingdom_Divided).png',
-      'Login_background_(Nex).png',
-      'Login_background_(Shattered_Relics_League).png',
-      'Login_background_(Tombs_of_Amascut).png',
-      'Login_background_(Desert_Treasure_II_-_The_Fallen_Empire).png',
-      'Login_background_(Varlamore).png',
-      'Login_background_(While_Guthix_Sleeps).png',
-      'Login_background_(Varlamore_The_Rising_Darkness).png',
-      'Login_background_(Yama).png',
-      'Login_background_(Varlamore_The_Final_Dawn).png',
-      'Login_background_(Sailing).png'
+    // Randomly select a background class
+    const backgroundClasses = [
+      'bg-old', 'bg-farming', 'bg-construction', 'bg-hunter', 'bg-halloween',
+      'bg-halloween-2019', 'bg-christmas-old', 'bg-monkey-madness', 'bg-chambers',
+      'bg-inferno', 'bg-fossil-island', 'bg-dragon-slayer', 'bg-tob', 'bg-kebos',
+      'bg-sote', 'bg-sins', 'bg-kingdom-divided', 'bg-nex', 'bg-shattered-relics',
+      'bg-toa', 'bg-dt2', 'bg-varlamore', 'bg-wgs', 'bg-varlamore-rising',
+      'bg-yama', 'bg-varlamore-final', 'bg-sailing'
     ];
-    const randomBg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
-    const encodedPath = encodeURI(`${process.env.PUBLIC_URL}/Login_backgrounds/${randomBg}`);
-    console.log('Selected background:', randomBg);
-    console.log('Encoded path:', encodedPath);
-    setBackground(encodedPath);
+    const randomClass = backgroundClasses[Math.floor(Math.random() * backgroundClasses.length)];
+    document.querySelector('.App-header').classList.add(randomClass);
 
     Promise.all([
       fetch('https://raw.githubusercontent.com/0xNeffarion/osrsreboxed-db/master/docs/items-complete.json').then(r => r.json()),
@@ -89,14 +64,6 @@ function App() {
       });
   }, []);
 
-  useEffect(() => {
-    if (gameContainerRef.current && guesses.length > 0) {
-      gameContainerRef.current.scrollTo({
-        top: gameContainerRef.current.scrollHeight,
-        behavior: 'smooth'
-      });
-    }
-  }, [guesses]);
 
   const suggestions = inputValue.length > 1
     ? allItems.filter(item =>
@@ -181,13 +148,10 @@ function App() {
 
   if (loading) return <div className="App"><header className="App-header"><p>Loading items...</p></header></div>;
 
-  // console.log('Rendering with background:', background);
-  // console.log('Full CSS url:', `url(${background})`);
-
   return (
     <div className="App">
-      <header className="App-header" style={{ backgroundImage: `url("${background}")`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
-        <div className="game-container" ref={gameContainerRef}>
+      <header className="App-header">
+        <div className="game-container">
           <h1>Scapedle</h1>
 
           {gameWon ? (

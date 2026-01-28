@@ -4,15 +4,46 @@
 
 .App-header {
   background-color: #282c34;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding-top: 40px;
   font-size: calc(10px + 2vmin);
   color: white;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
 }
+
+/* Background image variants */
+.App-header.bg-old { background-image: url(../public/Login_backgrounds/Login_background_\(old\).png); }
+.App-header.bg-farming { background-image: url(../public/Login_backgrounds/Login_background_\(Farming\).png); }
+.App-header.bg-construction { background-image: url(../public/Login_backgrounds/Login_background_\(Construction\).png); }
+.App-header.bg-hunter { background-image: url(../public/Login_backgrounds/Login_background_\(Hunter\).png); }
+.App-header.bg-halloween { background-image: url(../public/Login_backgrounds/Login_background_\(Halloween\).png); }
+.App-header.bg-halloween-2019 { background-image: url(../public/Login_backgrounds/Login_background_\(Halloween_2019\).png); }
+.App-header.bg-christmas-old { background-image: url(../public/Login_backgrounds/Login_background_\(Christmas_Old\).png); }
+.App-header.bg-monkey-madness { background-image: url(../public/Login_backgrounds/Login_background_\(Monkey_Madness_II\).png); }
+.App-header.bg-chambers { background-image: url(../public/Login_backgrounds/Login_background_\(Chambers_of_Xeric\).png); }
+.App-header.bg-inferno { background-image: url(../public/Login_backgrounds/Login_background_\(The_Inferno\).png); }
+.App-header.bg-fossil-island { background-image: url(../public/Login_backgrounds/Login_background_\(Fossil_Island\).png); }
+.App-header.bg-dragon-slayer { background-image: url(../public/Login_backgrounds/Login_background_\(Dragon_Slayer_II\).png); }
+.App-header.bg-tob { background-image: url(../public/Login_backgrounds/Login_background_\(Theatre_of_Blood\).png); }
+.App-header.bg-kebos { background-image: url(../public/Login_backgrounds/Login_background_\(Kebos_Lowlands\).png); }
+.App-header.bg-sote { background-image: url(../public/Login_backgrounds/Login_background_\(Song_of_the_Elves\).png); }
+.App-header.bg-sins { background-image: url(../public/Login_backgrounds/Login_background_\(Sins_of_the_Father\).png); }
+.App-header.bg-kingdom-divided { background-image: url(../public/Login_backgrounds/Login_background_\(A_Kingdom_Divided\).png); }
+.App-header.bg-nex { background-image: url(../public/Login_backgrounds/Login_background_\(Nex\).png); }
+.App-header.bg-shattered-relics { background-image: url(../public/Login_backgrounds/Login_background_\(Shattered_Relics_League\).png); }
+.App-header.bg-toa { background-image: url(../public/Login_backgrounds/Login_background_\(Tombs_of_Amascut\).png); }
+.App-header.bg-dt2 { background-image: url(../public/Login_backgrounds/Login_background_\(Desert_Treasure_II_-_The_Fallen_Empire\).png); }
+.App-header.bg-varlamore { background-image: url(../public/Login_backgrounds/Login_background_\(Varlamore\).png); }
+.App-header.bg-wgs { background-image: url(../public/Login_backgrounds/Login_background_\(While_Guthix_Sleeps\).png); }
+.App-header.bg-varlamore-rising { background-image: url(../public/Login_backgrounds/Login_background_\(Varlamore_The_Rising_Darkness\).png); }
+.App-header.bg-yama { background-image: url(../public/Login_backgrounds/Login_background_\(Yama\).png); }
+.App-header.bg-varlamore-final { background-image: url(../public/Login_backgrounds/Login_background_\(Varlamore_The_Final_Dawn\).png); }
+.App-header.bg-sailing { background-image: url(../public/Login_backgrounds/Login_background_\(Sailing\).png); }
 
 .game-container {
   background: rgba(40, 44, 52, 0.9);
@@ -21,8 +52,6 @@
   max-width: 900px;
   width: 90%;
   min-height: 350px;
-  max-height: calc(100vh - 80px);
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
