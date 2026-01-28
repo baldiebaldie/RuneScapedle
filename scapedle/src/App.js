@@ -210,11 +210,11 @@ function App() {
               <div className="guess-row header">
                 <div className="cell item-cell">Item</div>
                 <div className="cell">GE Value</div>
-                <div className="cell">Volume</div>
+                <div className="cell">Daily Trade Volume</div>
                 <div className="cell">Equippable</div>
-                <div className="cell">Slot</div>
+                <div className="cell">Item Slot</div>
                 <div className="cell">Buy Limit</div>
-                <div className="cell">Released</div>
+                <div className="cell">Release Date</div>
               </div>
               {guesses.map(renderGuessRow)}
             </div>
