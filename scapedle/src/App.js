@@ -50,6 +50,9 @@ function App() {
             // Remove broken Barrows items
             if (item.name.includes(' 0')) return false;
 
+            // Remove god book pages (e.g., "Ancient page 1", "Bandos page 2")
+            if (/page [1-4]$/i.test(item.name)) return false;
+
             return true;
           });
         setAllItems(tradeable);
