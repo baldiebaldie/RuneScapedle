@@ -156,7 +156,15 @@ function App() {
 
           {gameWon ? (
             <div className="win-message">
-              <h2>You got it! {targetItem.name}</h2>
+              <h2>
+                You got it!{' '}
+                <img
+                  src={`data:image/png;base64,${targetItem.icon}`}
+                  alt={targetItem.name}
+                  className="item-icon"
+                />
+                {targetItem.name}
+              </h2>
               <p>Guesses: {guesses.length}</p>
             </div>
           ) : (
