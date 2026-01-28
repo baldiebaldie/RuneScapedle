@@ -116,7 +116,6 @@ function App() {
   const renderGuessRow = (guess) => {
     const geValue = getIndicator(guess.ge_price, targetItem.ge_price);
     const volume = getIndicator(guess.volume, targetItem.volume);
-    const weight = getIndicator(guess.weight, targetItem.weight);
     const buyLimit = getIndicator(guess.buy_limit, targetItem.buy_limit);
     const releaseYear = getIndicator(getYear(guess.release_date), getYear(targetItem.release_date));
 
@@ -153,9 +152,6 @@ function App() {
         </div>
         <div className={`cell ${volume.match ? 'correct' : 'wrong'}`}>
           {guess.volume?.toLocaleString()} {!volume.match && volume.arrow}
-        </div>
-        <div className={`cell ${weight.match ? 'correct' : 'wrong'}`}>
-          {guess.weight} kg {!weight.match && weight.arrow}
         </div>
         <div className={`cell ${equippableMatch ? 'correct' : 'wrong'}`}>
           {guessEquippable ? 'Yes' : 'No'}
@@ -215,7 +211,6 @@ function App() {
                 <div className="cell item-cell">Item</div>
                 <div className="cell">GE Value</div>
                 <div className="cell">Volume</div>
-                <div className="cell">Weight</div>
                 <div className="cell">Equippable</div>
                 <div className="cell">Slot</div>
                 <div className="cell">Buy Limit</div>
