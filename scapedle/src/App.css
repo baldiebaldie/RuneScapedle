@@ -148,3 +148,42 @@
 .win-message h2 {
   color: #4caf50;
 }
+
+.tab-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tab {
+  padding: 10px 20px;
+  background: #444;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.tab:hover {
+  background: #555;
+}
+
+.tab.active {
+  background: #2e7d32;
+}
+
+.play-again-btn {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: #1976d2;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.play-again-btn:hover {
+  background: #1565c0;
+}

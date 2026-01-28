@@ -1,13 +1,36 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 
+// Seeded random number generator using date string
+const seededRandom = (seed) => {
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = ((hash << 5) - hash) + seed.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+};
+
+const getTodayString = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+
 function App() {
   const [allItems, setAllItems] = useState([]);
-  const [targetItem, setTargetItem] = useState(null);
-  const [guesses, setGuesses] = useState([]);
-  const [inputValue, setInputValue] = useState('');
-  const [gameWon, setGameWon] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [inputValue, setInputValue] = useState('');
+  const [gameMode, setGameMode] = useState('daily');
+
+  // Daily mode state
+  const [dailyTarget, setDailyTarget] = useState(null);
+  const [dailyGuesses, setDailyGuesses] = useState([]);
+  const [dailyWon, setDailyWon] = useState(false);
+
+  // Unlimited mode state
+  const [unlimitedTarget, setUnlimitedTarget] = useState(null);
+  const [unlimitedGuesses, setUnlimitedGuesses] = useState([]);
+  const [unlimitedWon, setUnlimitedWon] = useState(false);
 
   useEffect(() => {
     // Randomly select a background class
@@ -55,10 +78,37 @@ function App() {
 
             return true;
           });
+
         setAllItems(tradeable);
-        const randomIndex = Math.floor(Math.random() * tradeable.length);
-        setTargetItem(tradeable[randomIndex]);
-        console.log('Answer:', tradeable[randomIndex].name);
+
+        // Set daily target using seeded random
+        const today = getTodayString();
+        const dailyIndex = seededRandom(today) % tradeable.length;
+        setDailyTarget(tradeable[dailyIndex]);
+        console.log('Daily Answer:', tradeable[dailyIndex].name);
+
+        // Set unlimited target randomly
+        const unlimitedIndex = Math.floor(Math.random() * tradeable.length);
+        setUnlimitedTarget(tradeable[unlimitedIndex]);
+        console.log('Unlimited Answer:', tradeable[unlimitedIndex].name);
+
+        // Load daily progress from localStorage
+        const savedDate = localStorage.getItem('scapedle-daily-date');
+        if (savedDate === today) {
+          const savedGuessIds = JSON.parse(localStorage.getItem('scapedle-daily-guesses') || '[]');
+          const savedWon = localStorage.getItem('scapedle-daily-won') === 'true';
+          const restoredGuesses = savedGuessIds
+            .map(id => tradeable.find(item => item.id === id))
+            .filter(Boolean);
+          setDailyGuesses(restoredGuesses);
+          setDailyWon(savedWon);
+        } else {
+          // New day - clear old data
+          localStorage.setItem('scapedle-daily-date', today);
+          localStorage.setItem('scapedle-daily-guesses', '[]');
+          localStorage.setItem('scapedle-daily-won', 'false');
+        }
+
         setLoading(false);
       })
       .catch(err => {
@@ -67,6 +117,10 @@ function App() {
       });
   }, []);
 
+  // Get current mode's state
+  const targetItem = gameMode === 'daily' ? dailyTarget : unlimitedTarget;
+  const guesses = gameMode === 'daily' ? dailyGuesses : unlimitedGuesses;
+  const gameWon = gameMode === 'daily' ? dailyWon : unlimitedWon;
 
   const suggestions = inputValue.length > 1
     ? allItems.filter(item =>
@@ -77,9 +131,34 @@ function App() {
 
   const handleGuess = (item) => {
     if (guesses.find(g => g.id === item.id)) return;
-    setGuesses([...guesses, item]);
+
+    if (gameMode === 'daily') {
+      const newGuesses = [...dailyGuesses, item];
+      setDailyGuesses(newGuesses);
+      localStorage.setItem('scapedle-daily-guesses', JSON.stringify(newGuesses.map(g => g.id)));
+
+      if (item.id === dailyTarget.id) {
+        setDailyWon(true);
+        localStorage.setItem('scapedle-daily-won', 'true');
+      }
+    } else {
+      const newGuesses = [...unlimitedGuesses, item];
+      setUnlimitedGuesses(newGuesses);
+
+      if (item.id === unlimitedTarget.id) {
+        setUnlimitedWon(true);
+      }
+    }
+
     setInputValue('');
-    if (item.id === targetItem.id) setGameWon(true);
+  };
+
+  const handlePlayAgain = () => {
+    const randomIndex = Math.floor(Math.random() * allItems.length);
+    setUnlimitedTarget(allItems[randomIndex]);
+    setUnlimitedGuesses([]);
+    setUnlimitedWon(false);
+    console.log('New Unlimited Answer:', allItems[randomIndex].name);
   };
 
   const getIndicator = (guessVal, targetVal) => {
@@ -157,6 +236,21 @@ function App() {
         <div className="game-container">
           <h1>Scapedle</h1>
 
+          <div className="tab-container">
+            <button
+              className={`tab ${gameMode === 'daily' ? 'active' : ''}`}
+              onClick={() => setGameMode('daily')}
+            >
+              Daily
+            </button>
+            <button
+              className={`tab ${gameMode === 'unlimited' ? 'active' : ''}`}
+              onClick={() => setGameMode('unlimited')}
+            >
+              Unlimited
+            </button>
+          </div>
+
           {gameWon ? (
             <div className="win-message">
               <h2>
@@ -169,6 +263,11 @@ function App() {
                 {targetItem.name}
               </h2>
               <p>Guesses: {guesses.length}</p>
+              {gameMode === 'unlimited' && (
+                <button className="play-again-btn" onClick={handlePlayAgain}>
+                  Play Again
+                </button>
+              )}
             </div>
           ) : (
             <div className="search-container">
