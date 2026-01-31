@@ -67,6 +67,12 @@ function App() {
             const isExpensive = item.ge_price >= 100000;
             if (!hasVolume && !isExpensive) return false;
 
+            // Remove low volume items unless they're very expensive (over 5M)
+            if (item.volume < 500 && item.ge_price <= 5000000) return false;
+
+            // Remove cheap items (under 500 gp) unless they have high volume (750k+)
+            if (item.ge_price < 500 && item.volume < 750000) return false;
+
             // Remove potion doses under 4: "(1)", "(2)", "(3)"
             if (/\([1-3]\)$/.test(item.name)) return false;
 
@@ -172,6 +178,12 @@ function App() {
     return new Date(dateStr).getFullYear();
   };
 
+  const hasMatchingWord = (guessName, targetName) => {
+    const guessWords = guessName.toLowerCase().split(/\s+/);
+    const targetWords = targetName.toLowerCase().split(/\s+/);
+    return guessWords.some(word => targetWords.includes(word));
+  };
+
   const renderGuessRow = (guess) => {
     const geValue = getIndicator(guess.ge_price, targetItem.ge_price);
     const volume = getIndicator(guess.volume, targetItem.volume);
@@ -198,7 +210,7 @@ function App() {
 
     return (
       <div key={guess.id} className="guess-row">
-        <div className="cell item-cell">
+        <div className={`cell item-cell ${guess.id === targetItem.id ? 'correct' : hasMatchingWord(guess.name, targetItem.name) ? 'partial' : ''}`}>
           <img
             src={`data:image/png;base64,${guess.icon}`}
             alt={guess.name}
