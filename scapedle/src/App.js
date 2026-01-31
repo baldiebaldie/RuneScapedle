@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 import { supabase } from './supabase';
+import { musicTracks } from './musicTracks';
+import MusicGame from './MusicGame';
 
 // Seeded random number generator using date string
 const seededRandom = (seed) => {
@@ -50,6 +52,34 @@ const saveDailyWord = async (dateString, item) => {
   }
 };
 
+const fetchDailySong = async (dateString) => {
+  const { data, error } = await supabase
+    .from('daily_songs')
+    .select('song_name, song_url, location')
+    .eq('date', dateString)
+    .single();
+
+  if (error && error.code !== 'PGRST116') {
+    console.error('Error fetching daily song:', error);
+  }
+  return data;
+};
+
+const saveDailySong = async (dateString, song) => {
+  const { error } = await supabase
+    .from('daily_songs')
+    .upsert({
+      date: dateString,
+      song_name: song.name,
+      song_url: song.url,
+      location: song.location
+    }, { onConflict: 'date' });
+
+  if (error) {
+    console.error('Error saving daily song:', error);
+  }
+};
+
 function App() {
   const [allItems, setAllItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -67,6 +97,16 @@ function App() {
   const [unlimitedWon, setUnlimitedWon] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [yesterdayItem, setYesterdayItem] = useState(null);
+
+  // Main game type: 'items' or 'music'
+  const [gameType, setGameType] = useState('items');
+
+  // Music mode state (passed to MusicGame component)
+  const [dailySong, setDailySong] = useState(null);
+  const [unlimitedSong, setUnlimitedSong] = useState(null);
+  const [yesterdaySong, setYesterdaySong] = useState(null);
+  const [initialSongGuesses, setInitialSongGuesses] = useState([]);
+  const [initialSongWon, setInitialSongWon] = useState(false);
 
   useEffect(() => {
     // Randomly select a background class
@@ -167,6 +207,43 @@ function App() {
           localStorage.setItem('scapedle-daily-date', today);
           localStorage.setItem('scapedle-daily-guesses', '[]');
           localStorage.setItem('scapedle-daily-won', 'false');
+        }
+
+        // Load music mode data
+        let todaySongData = await fetchDailySong(today);
+        if (!todaySongData) {
+          const songIndex = seededRandom(today + '-song') % musicTracks.length;
+          const selectedSong = musicTracks[songIndex];
+          await saveDailySong(today, selectedSong);
+          setDailySong(selectedSong);
+          console.log('Daily Song:', selectedSong.name);
+        } else {
+          const song = musicTracks.find(s => s.name === todaySongData.song_name);
+          setDailySong(song || todaySongData);
+          console.log('Daily Song:', todaySongData.song_name);
+        }
+
+        // Fetch yesterday's song
+        const yesterdaySongData = await fetchDailySong(getYesterdayString());
+        if (yesterdaySongData) {
+          const song = musicTracks.find(s => s.name === yesterdaySongData.song_name);
+          setYesterdaySong(song || yesterdaySongData);
+        }
+
+        // Set unlimited song randomly
+        const unlimitedSongIndex = Math.floor(Math.random() * musicTracks.length);
+        setUnlimitedSong(musicTracks[unlimitedSongIndex]);
+        console.log('Unlimited Song:', musicTracks[unlimitedSongIndex].name);
+
+        // Load daily song progress from localStorage
+        if (savedDate === today) {
+          const savedSongGuesses = JSON.parse(localStorage.getItem('scapedle-daily-song-guesses') || '[]');
+          const savedSongWon = localStorage.getItem('scapedle-daily-song-won') === 'true';
+          setInitialSongGuesses(savedSongGuesses);
+          setInitialSongWon(savedSongWon);
+        } else {
+          localStorage.setItem('scapedle-daily-song-guesses', '[]');
+          localStorage.setItem('scapedle-daily-song-won', 'false');
         }
 
         setLoading(false);
@@ -337,84 +414,112 @@ function App() {
             />
           </h1>
 
-          <div className="tab-container">
+          <div className="game-type-tabs">
             <button
-              className={`tab ${gameMode === 'daily' ? 'active' : ''}`}
-              onClick={() => setGameMode('daily')}
+              className={`game-type-tab ${gameType === 'items' ? 'active' : ''}`}
+              onClick={() => setGameType('items')}
             >
-              Daily
+              Items
             </button>
             <button
-              className={`tab ${gameMode === 'unlimited' ? 'active' : ''}`}
-              onClick={() => setGameMode('unlimited')}
+              className={`game-type-tab ${gameType === 'music' ? 'active' : ''}`}
+              onClick={() => setGameType('music')}
             >
-              Unlimited
+              Music
             </button>
           </div>
 
-          {gameMode === 'daily' && yesterdayItem && (
-            <div className="yesterday-word">
-              <span>Yesterday's word:</span>
-              <img
-                src={`data:image/png;base64,${yesterdayItem.icon}`}
-                alt={yesterdayItem.name}
-                className="item-icon small"
-              />
-              <span>{yesterdayItem.name}</span>
-            </div>
-          )}
-
-          {gameWon ? (
-            <div className="win-message">
-              <h2>
-                {' '}
-                <img
-                  src={`data:image/png;base64,${targetItem.icon}`}
-                  alt={targetItem.name}
-                  className="item-icon"
-                />
-                {targetItem.name}
-              </h2>
-              <p>Guesses: {guesses.length}</p>
-              {gameMode === 'unlimited' && (
-                <button className="play-again-btn" onClick={handlePlayAgain}>
-                  Play Again
+          {gameType === 'items' ? (
+            <>
+              <div className="tab-container">
+                <button
+                  className={`tab ${gameMode === 'daily' ? 'active' : ''}`}
+                  onClick={() => setGameMode('daily')}
+                >
+                  Daily
                 </button>
-              )}
-            </div>
-          ) : (
-            <div className="search-container">
-              <input
-                type="text"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Guess an item..."
-              />
-              {suggestions.length > 0 && (
-                <div className="suggestions">
-                  {suggestions.map(item => (
-                    <div key={item.id} className="suggestion" onClick={() => handleGuess(item)}>
-                      {item.name}
-                    </div>
-                  ))}
+                <button
+                  className={`tab ${gameMode === 'unlimited' ? 'active' : ''}`}
+                  onClick={() => setGameMode('unlimited')}
+                >
+                  Unlimited
+                </button>
+              </div>
+
+              {gameMode === 'daily' && yesterdayItem && (
+                <div className="yesterday-word">
+                  <span>Yesterday's item:</span>
+                  <img
+                    src={`data:image/png;base64,${yesterdayItem.icon}`}
+                    alt={yesterdayItem.name}
+                    className="item-icon small"
+                  />
+                  <span>{yesterdayItem.name}</span>
                 </div>
               )}
-            </div>
-          )}
 
-          {guesses.length > 0 && (
-            <div className="guess-table">
-              <div className="guess-row header">
-                <div className="cell item-cell">Item</div>
-                <div className="cell">GE Value</div>
-                <div className="cell">Daily Trade Volume</div>
-                <div className="cell">Equippable</div>
-                <div className="cell">Item Slot</div>
-                <div className="cell">Buy Limit</div>
-                <div className="cell">Release Date</div>
-              </div>
-              {guesses.map(renderGuessRow)}
-            </div>
+              {gameWon ? (
+                <div className="win-message">
+                  <h2>
+                    {' '}
+                    <img
+                      src={`data:image/png;base64,${targetItem.icon}`}
+                      alt={targetItem.name}
+                      className="item-icon"
+                    />
+                    {targetItem.name}
+                  </h2>
+                  <p>Guesses: {guesses.length}</p>
+                  {gameMode === 'unlimited' && (
+                    <button className="play-again-btn" onClick={handlePlayAgain}>
+                      Play Again
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <div className="search-container">
+                  <input
+                    type="text"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    placeholder="Guess an item..."
+                  />
+                  {suggestions.length > 0 && (
+                    <div className="suggestions">
+                      {suggestions.map(item => (
+                        <div key={item.id} className="suggestion" onClick={() => handleGuess(item)}>
+                          {item.name}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {guesses.length > 0 && (
+                <div className="guess-table">
+                  <div className="guess-row header">
+                    <div className="cell item-cell">Item</div>
+                    <div className="cell">GE Value</div>
+                    <div className="cell">Daily Trade Volume</div>
+                    <div className="cell">Equippable</div>
+                    <div className="cell">Item Slot</div>
+                    <div className="cell">Buy Limit</div>
+                    <div className="cell">Release Date</div>
+                  </div>
+                  {guesses.map(renderGuessRow)}
+                </div>
+              )}
+            </>
+          ) : (
+            <MusicGame
+              dailySong={dailySong}
+              unlimitedSong={unlimitedSong}
+              yesterdaySong={yesterdaySong}
+              setUnlimitedSong={setUnlimitedSong}
+              initialDailyGuesses={initialSongGuesses}
+              initialDailyWon={initialSongWon}
+            />
           )}
         </div>
       </header>
