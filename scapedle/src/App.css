@@ -104,6 +104,16 @@
 .game-container h1 {
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
   letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.title-rune {
+  width: 64px;
+  height: 64px;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0 8px rgba(138, 43, 226, 0.6));
 }
 
 .search-container {

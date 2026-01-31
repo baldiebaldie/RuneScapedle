@@ -323,7 +323,19 @@ function App() {
               <p>↑ means the target value is higher. ↓ means the target value is lower.</p>
             </div>
           )}
-          <h1>Scapedle</h1>
+          <h1>
+            <img
+              src="https://oldschool.runescape.wiki/images/Soul_rune.png"
+              alt="Soul rune"
+              className="title-rune"
+            />
+            Scapedle
+            <img
+              src="https://oldschool.runescape.wiki/images/Soul_rune.png"
+              alt="Soul rune"
+              className="title-rune"
+            />
+          </h1>
 
           <div className="tab-container">
             <button
