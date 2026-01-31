@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './App.css';
+import { supabase } from './supabase';
 
 // Seeded random number generator using date string
 const seededRandom = (seed) => {
@@ -14,6 +15,39 @@ const seededRandom = (seed) => {
 const getTodayString = () => {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+
+const getYesterdayString = () => {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+
+const fetchDailyWord = async (dateString) => {
+  const { data, error } = await supabase
+    .from('daily_words')
+    .select('item_id, item_name')
+    .eq('date', dateString)
+    .single();
+
+  if (error && error.code !== 'PGRST116') {
+    console.error('Error fetching daily word:', error);
+  }
+  return data;
+};
+
+const saveDailyWord = async (dateString, item) => {
+  const { error } = await supabase
+    .from('daily_words')
+    .upsert({
+      date: dateString,
+      item_id: item.id,
+      item_name: item.name
+    }, { onConflict: 'date' });
+
+  if (error) {
+    console.error('Error saving daily word:', error);
+  }
 };
 
 function App() {
@@ -32,6 +66,7 @@ function App() {
   const [unlimitedGuesses, setUnlimitedGuesses] = useState([]);
   const [unlimitedWon, setUnlimitedWon] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
+  const [yesterdayItem, setYesterdayItem] = useState(null);
 
   useEffect(() => {
     // Randomly select a background class
@@ -51,7 +86,7 @@ function App() {
       fetch('https://prices.runescape.wiki/api/v1/osrs/latest').then(r => r.json()),
       fetch('https://prices.runescape.wiki/api/v1/osrs/volumes').then(r => r.json())
     ])
-      .then(([itemData, priceData, volumeData]) => {
+      .then(async ([itemData, priceData, volumeData]) => {
         const prices = priceData.data;
         const volumes = volumeData.data;
         // Filter to tradeable items and merge with live GE prices
@@ -88,11 +123,29 @@ function App() {
 
         setAllItems(tradeable);
 
-        // Set daily target using seeded random
+        // Fetch or create today's word from Supabase
         const today = getTodayString();
-        const dailyIndex = seededRandom(today) % tradeable.length;
-        setDailyTarget(tradeable[dailyIndex]);
-        console.log('Daily Answer:', tradeable[dailyIndex].name);
+        let todayData = await fetchDailyWord(today);
+
+        if (!todayData) {
+          // Generate new daily word using seeded random
+          const dailyIndex = seededRandom(today) % tradeable.length;
+          const selectedItem = tradeable[dailyIndex];
+          await saveDailyWord(today, selectedItem);
+          setDailyTarget(selectedItem);
+          console.log('Daily Answer:', selectedItem.name);
+        } else {
+          const dailyItem = tradeable.find(item => item.id === todayData.item_id);
+          setDailyTarget(dailyItem);
+          console.log('Daily Answer:', dailyItem?.name);
+        }
+
+        // Fetch yesterday's word
+        const yesterdayData = await fetchDailyWord(getYesterdayString());
+        if (yesterdayData) {
+          const yesterdayWord = tradeable.find(item => item.id === yesterdayData.item_id);
+          setYesterdayItem(yesterdayWord);
+        }
 
         // Set unlimited target randomly
         const unlimitedIndex = Math.floor(Math.random() * tradeable.length);
@@ -286,6 +339,18 @@ function App() {
               Unlimited
             </button>
           </div>
+
+          {gameMode === 'daily' && yesterdayItem && (
+            <div className="yesterday-word">
+              <span>Yesterday's word:</span>
+              <img
+                src={`data:image/png;base64,${yesterdayItem.icon}`}
+                alt={yesterdayItem.name}
+                className="item-icon small"
+              />
+              <span>{yesterdayItem.name}</span>
+            </div>
+          )}
 
           {gameWon ? (
             <div className="win-message">

@@ -428,3 +428,21 @@
 .color-box.red {
   background: linear-gradient(135deg, #c62828 0%, #8b1c1c 100%);
 }
+
+/* Yesterday's word */
+.yesterday-word {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 16px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.yesterday-word .item-icon.small {
+  width: 24px;
+  height: 24px;
+}
