@@ -85,6 +85,7 @@
 }
 
 .game-container {
+  position: relative;
   background: rgba(26, 29, 35, 0.95);
   padding: 30px 50px;
   border-radius: 16px;
@@ -334,4 +335,96 @@
 .suggestions::-webkit-scrollbar-thumb:hover,
 .guess-table::-webkit-scrollbar-thumb:hover {
   background: #5a6070;
+}
+
+/* Help button and panel */
+.help-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3a4050 0%, #2a2f3a 100%);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+  z-index: 20;
+}
+
+.help-button:hover {
+  background: linear-gradient(135deg, #4a5060 0%, #3a4050 100%);
+  border-color: #4caf50;
+  transform: scale(1.1);
+}
+
+.help-panel {
+  position: absolute;
+  top: 55px;
+  right: 15px;
+  width: 320px;
+  background: rgba(42, 47, 58, 0.98);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: left;
+  font-size: 13px;
+  line-height: 1.5;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 15;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.help-panel h3 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  color: #4caf50;
+}
+
+.help-panel h4 {
+  margin: 16px 0 8px 0;
+  font-size: 14px;
+  color: #fff;
+}
+
+.help-panel p {
+  margin: 8px 0;
+  color: #ccc;
+}
+
+.help-panel ul {
+  margin: 8px 0;
+  padding-left: 20px;
+  color: #ccc;
+}
+
+.help-panel li {
+  margin: 6px 0;
+}
+
+.color-box {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+.color-box.green {
+  background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+}
+
+.color-box.orange {
+  background: linear-gradient(135deg, #f57c00 0%, #e65100 100%);
+}
+
+.color-box.red {
+  background: linear-gradient(135deg, #c62828 0%, #8b1c1c 100%);
 }

@@ -31,6 +31,7 @@ function App() {
   const [unlimitedTarget, setUnlimitedTarget] = useState(null);
   const [unlimitedGuesses, setUnlimitedGuesses] = useState([]);
   const [unlimitedWon, setUnlimitedWon] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
 
   useEffect(() => {
     // Randomly select a background class
@@ -246,6 +247,29 @@ function App() {
     <div className="App">
       <header className="App-header">
         <div className="game-container">
+          <div className="help-button" onClick={() => setShowHelp(!showHelp)}>
+            ?
+          </div>
+          {showHelp && (
+            <div className="help-panel">
+              <h3>How to Play</h3>
+              <p>Guess the random Old School RuneScape item!</p>
+              <p>Type an item name and pick from the list. After each guess, you'll see hints about the target item.</p>
+              <h4>What the colors mean:</h4>
+              <ul>
+                <li><span className="color-box green"></span> <strong>Green</strong> = Correct - This value matches exactly.</li>
+                <li><span className="color-box orange"></span> <strong>Orange</strong> = Close - You're on the right track.</li>
+                <li><span className="color-box red"></span> <strong>Red</strong> = Wrong - This value doesn't match.</li>
+              </ul>
+              <h4>Orange hints explained:</h4>
+              <ul>
+                <li><strong>Item name:</strong> Your guess shares a word with the answer (like "Rune scimitar" and "Rune platebody").</li>
+                <li><strong>Item slot:</strong> Both items are equippable, but in different slots.</li>
+              </ul>
+              <h4>Arrows:</h4>
+              <p>↑ means the target value is higher. ↓ means the target value is lower.</p>
+            </div>
+          )}
           <h1>Scapedle</h1>
 
           <div className="tab-container">
@@ -266,7 +290,7 @@ function App() {
           {gameWon ? (
             <div className="win-message">
               <h2>
-                You got it!{' '}
+                {' '}
                 <img
                   src={`data:image/png;base64,${targetItem.icon}`}
                   alt={targetItem.name}
