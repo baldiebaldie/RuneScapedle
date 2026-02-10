@@ -1,43 +1,71 @@
 import { useState, useRef, useEffect } from 'react';
 import { musicTracks, WIKI_AUDIO_BASE_URL } from './musicTracks';
+import OSRSMap from './components/OSRSMap';
+import {
+  locationToRegion,
+  getRegionById,
+  calculateTemperature,
+  TEMPERATURE
+} from './data/mapRegions';
 
-function MusicGame({ dailySong, unlimitedSong, yesterdaySong, setUnlimitedSong, initialDailyGuesses, initialDailyWon }) {
+function MusicGame({ dailySong, unlimitedSong, yesterdaySong, setUnlimitedSong, initialDailyWon }) {
   const [musicMode, setMusicMode] = useState('daily');
-  const [dailySongGuesses, setDailySongGuesses] = useState(initialDailyGuesses || []);
-  const [unlimitedSongGuesses, setUnlimitedSongGuesses] = useState([]);
+  const [dailyGuessHistory, setDailyGuessHistory] = useState([]);
+  const [unlimitedGuessHistory, setUnlimitedGuessHistory] = useState([]);
   const [dailySongWon, setDailySongWon] = useState(initialDailyWon || false);
   const [unlimitedSongWon, setUnlimitedSongWon] = useState(false);
-  const [songInputValue, setSongInputValue] = useState('');
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioProgress, setAudioProgress] = useState(0);
   const audioRef = useRef(null);
 
-  // Update state when props change (for localStorage restore)
+  // Load saved daily guess history from localStorage
   useEffect(() => {
-    if (initialDailyGuesses) setDailySongGuesses(initialDailyGuesses);
+    const savedHistory = localStorage.getItem('scapedle-daily-region-guesses');
+    if (savedHistory) {
+      try {
+        setDailyGuessHistory(JSON.parse(savedHistory));
+      } catch (e) {
+        console.error('Error parsing saved guess history:', e);
+      }
+    }
     if (initialDailyWon !== undefined) setDailySongWon(initialDailyWon);
-  }, [initialDailyGuesses, initialDailyWon]);
+  }, [initialDailyWon]);
 
   const currentSong = musicMode === 'daily' ? dailySong : unlimitedSong;
-  const songGuesses = musicMode === 'daily' ? dailySongGuesses : unlimitedSongGuesses;
+  const guessHistory = musicMode === 'daily' ? dailyGuessHistory : unlimitedGuessHistory;
   const songWon = musicMode === 'daily' ? dailySongWon : unlimitedSongWon;
 
-  const songSuggestions = songInputValue.length > 1
-    ? musicTracks.filter(track =>
-        track.name.toLowerCase().includes(songInputValue.toLowerCase()) &&
-        !songGuesses.includes(track.name)
-      ).slice(0, 8)
-    : [];
+  // Get the correct region ID for the current song
+  const getCorrectRegionId = () => {
+    if (!currentSong) return null;
+    return locationToRegion[currentSong.location] || null;
+  };
 
-  const handleSongGuess = (track) => {
-    if (songGuesses.includes(track.name)) return;
+  const handleRegionGuess = (regionId) => {
+    const correctRegionId = getCorrectRegionId();
+    if (!correctRegionId) return;
+
+    // Check if already guessed this region
+    if (guessHistory.some(g => g.regionId === regionId)) return;
+
+    const region = getRegionById(regionId);
+    const tempResult = calculateTemperature(regionId, correctRegionId);
+
+    const newGuess = {
+      regionId,
+      regionName: region?.name || regionId,
+      temperature: tempResult.temperature,
+      message: tempResult.message,
+      categoryMatch: tempResult.categoryMatch,
+      category: region?.category
+    };
 
     if (musicMode === 'daily') {
-      const newGuesses = [...dailySongGuesses, track.name];
-      setDailySongGuesses(newGuesses);
-      localStorage.setItem('scapedle-daily-song-guesses', JSON.stringify(newGuesses));
+      const newHistory = [...dailyGuessHistory, newGuess];
+      setDailyGuessHistory(newHistory);
+      localStorage.setItem('scapedle-daily-region-guesses', JSON.stringify(newHistory));
 
-      if (track.name === dailySong?.name) {
+      if (tempResult.temperature === TEMPERATURE.CORRECT) {
         setDailySongWon(true);
         localStorage.setItem('scapedle-daily-song-won', 'true');
         if (audioRef.current) {
@@ -46,10 +74,10 @@ function MusicGame({ dailySong, unlimitedSong, yesterdaySong, setUnlimitedSong, 
         }
       }
     } else {
-      const newGuesses = [...unlimitedSongGuesses, track.name];
-      setUnlimitedSongGuesses(newGuesses);
+      const newHistory = [...unlimitedGuessHistory, newGuess];
+      setUnlimitedGuessHistory(newHistory);
 
-      if (track.name === unlimitedSong?.name) {
+      if (tempResult.temperature === TEMPERATURE.CORRECT) {
         setUnlimitedSongWon(true);
         if (audioRef.current) {
           audioRef.current.pause();
@@ -57,8 +85,6 @@ function MusicGame({ dailySong, unlimitedSong, yesterdaySong, setUnlimitedSong, 
         }
       }
     }
-
-    setSongInputValue('');
   };
 
   const togglePlay = () => {
@@ -103,7 +129,7 @@ function MusicGame({ dailySong, unlimitedSong, yesterdaySong, setUnlimitedSong, 
     const randomIndex = Math.floor(Math.random() * musicTracks.length);
     const newSong = musicTracks[randomIndex];
     setUnlimitedSong(newSong);
-    setUnlimitedSongGuesses([]);
+    setUnlimitedGuessHistory([]);
     setUnlimitedSongWon(false);
     setIsPlaying(false);
     setAudioProgress(0);
@@ -112,11 +138,6 @@ function MusicGame({ dailySong, unlimitedSong, yesterdaySong, setUnlimitedSong, 
       audioRef.current.currentTime = 0;
     }
     console.log('New Unlimited Song:', newSong.name);
-  };
-
-  const getLocationForGuess = (guessName) => {
-    const track = musicTracks.find(t => t.name === guessName);
-    return track?.location || 'Unknown';
   };
 
   return (
@@ -155,11 +176,15 @@ function MusicGame({ dailySong, unlimitedSong, yesterdaySong, setUnlimitedSong, 
         </button>
       </div>
 
+      <div className="music-game-instructions">
+        <p>Listen to the music and click on the map location where this song unlocks!</p>
+      </div>
+
       {songWon ? (
         <div className="win-message">
           <h2>{currentSong?.name}</h2>
           <p className="location-hint">Unlocks: {currentSong?.location}</p>
-          <p>Guesses: {songGuesses.length}</p>
+          <p>Guesses: {guessHistory.length}</p>
           {musicMode === 'unlimited' && (
             <button className="play-again-btn" onClick={handleSongPlayAgain}>
               Play Again
@@ -167,36 +192,11 @@ function MusicGame({ dailySong, unlimitedSong, yesterdaySong, setUnlimitedSong, 
           )}
         </div>
       ) : (
-        <div className="search-container">
-          <input
-            type="text"
-            value={songInputValue}
-            onChange={(e) => setSongInputValue(e.target.value)}
-            placeholder="Guess the song..."
-          />
-          {songSuggestions.length > 0 && (
-            <div className="suggestions">
-              {songSuggestions.map(track => (
-                <div key={track.name} className="suggestion" onClick={() => handleSongGuess(track)}>
-                  {track.name}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      {songGuesses.length > 0 && !songWon && (
-        <div className="song-guesses">
-          <h4>Wrong guesses:</h4>
-          {songGuesses.map((guess, idx) => (
-            <div key={idx} className="song-guess-row">
-              <span className="wrong-icon">✗</span>
-              <span>{guess}</span>
-              <span className="location-hint">(Unlocks: {getLocationForGuess(guess)})</span>
-            </div>
-          ))}
-        </div>
+        <OSRSMap
+          onRegionSelect={handleRegionGuess}
+          guessHistory={guessHistory}
+          disabled={songWon}
+        />
       )}
     </>
   );

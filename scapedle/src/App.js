@@ -105,7 +105,6 @@ function App() {
   const [dailySong, setDailySong] = useState(null);
   const [unlimitedSong, setUnlimitedSong] = useState(null);
   const [yesterdaySong, setYesterdaySong] = useState(null);
-  const [initialSongGuesses, setInitialSongGuesses] = useState([]);
   const [initialSongWon, setInitialSongWon] = useState(false);
 
   useEffect(() => {
@@ -237,12 +236,10 @@ function App() {
 
         // Load daily song progress from localStorage
         if (savedDate === today) {
-          const savedSongGuesses = JSON.parse(localStorage.getItem('scapedle-daily-song-guesses') || '[]');
           const savedSongWon = localStorage.getItem('scapedle-daily-song-won') === 'true';
-          setInitialSongGuesses(savedSongGuesses);
           setInitialSongWon(savedSongWon);
         } else {
-          localStorage.setItem('scapedle-daily-song-guesses', '[]');
+          localStorage.setItem('scapedle-daily-region-guesses', '[]');
           localStorage.setItem('scapedle-daily-song-won', 'false');
         }
 
@@ -517,7 +514,6 @@ function App() {
               unlimitedSong={unlimitedSong}
               yesterdaySong={yesterdaySong}
               setUnlimitedSong={setUnlimitedSong}
-              initialDailyGuesses={initialSongGuesses}
               initialDailyWon={initialSongWon}
             />
           )}
