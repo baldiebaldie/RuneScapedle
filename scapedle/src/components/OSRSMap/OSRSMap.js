@@ -1,4 +1,4 @@
-import { useState, useId } from 'react';
+import { useState } from 'react';
 import { MapContainer, TileLayer, Rectangle, Popup, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -14,46 +14,67 @@ import './OSRSMap.css';
 
 // OSRS map bounds for regions (in Leaflet coordinates for CRS.Simple)
 // Format: [[south, west], [north, east]] or [[minLat, minLng], [maxLat, maxLng]]
-// These coordinates are scaled to match the tile system
+// Coordinates calibrated to overworld-only tileset
+// Smaller/specific regions listed first so they take click priority over larger ones
 const regionBounds = {
-  tutorial_island: [[-80, 47], [-75, 53]],
-  lumbridge: [[-79, 50], [-72, 58]],
-  draynor: [[-78, 45], [-73, 50]],
-  varrock: [[-72, 50], [-64, 62]],
-  falador: [[-75, 42], [-68, 50]],
-  port_sarim: [[-80, 43], [-75, 48]],
-  karamja: [[-90, 40], [-78, 52]],
-  al_kharid: [[-80, 52], [-72, 60]],
-  desert: [[-100, 48], [-80, 68]],
-  wilderness: [[-64, 44], [-40, 68]],
-  ardougne: [[-78, 30], [-70, 42]],
-  yanille: [[-82, 32], [-78, 38]],
-  camelot: [[-74, 36], [-68, 46]],
-  morytania: [[-78, 58], [-64, 78]],
-  fremennik: [[-68, 30], [-58, 46]],
-  tirannwn: [[-86, 18], [-70, 32]],
-  troll_country: [[-68, 40], [-60, 50]],
-  ape_atoll: [[-96, 36], [-90, 44]],
-  hosidius: [[-74, 100], [-66, 114]],
-  arceuus: [[-66, 96], [-58, 108]],
-  lovakengj: [[-66, 88], [-56, 98]],
-  shayzien: [[-74, 88], [-66, 100]],
-  piscarilius: [[-66, 106], [-58, 116]],
-  weiss: [[-50, 44], [-44, 52]]
+  // Small specific regions first
+  tutorial_island: [[-55, 100], [-50, 107]],
+  weiss: [[-16, 87], [-10, 94]],
+
+  // Kourend sub-regions (northwest of main continent)
+  lovakengj: [[-23, 14], [-15, 27]],
+  arceuus: [[-23, 27], [-15, 42]],
+  shayzien: [[-33, 18], [-23, 30]],
+  hosidius: [[-35, 28], [-24, 40]],
+  piscarilius: [[-25, 38], [-18, 48]],
+
+  // Small mainland regions
+  port_sarim: [[-50, 92], [-45, 100]],
+  draynor: [[-50, 96], [-41, 103]],
+  al_kharid: [[-50, 109], [-42, 116]],
+  lumbridge: [[-50, 103], [-42, 109]],
+
+  // Main cities
+  falador: [[-45, 88], [-36, 96]],
+  varrock: [[-42, 98], [-32, 112]],
+
+  // Western areas
+  camelot: [[-40, 68], [-32, 90]],
+  ardougne: [[-48, 68], [-40, 82]],
+  yanille: [[-57, 66], [-48, 80]],
+  tirannwn: [[-55, 50], [-34, 68]],
+
+  // Northern areas
+  troll_country: [[-32, 84], [-24, 92]],
+  fremennik: [[-30, 58], [-14, 78]],
+
+  // Southern areas
+  ape_atoll: [[-73, 82], [-66, 94]],
+  karamja: [[-64, 80], [-48, 96]],
+
+  // Large regions last (lowest click priority)
+  morytania: [[-50, 114], [-30, 135]],
+  desert: [[-75, 100], [-50, 120]],
+  wilderness: [[-32, 90], [-8, 118]]
 };
 
 // Custom click handler component
 function MapClickHandler({ onRegionClick, disabled, guessHistory }) {
   useMapEvents({
     click: (e) => {
-      if (disabled) return;
-
       const { lat, lng } = e.latlng;
+
+      // DEBUG: Log click coordinates to help fine-tune region bounds
+      // Remove this console.log once regions are verified
+      console.log(`[DEBUG] Map click: lat=${lat.toFixed(4)}, lng=${lng.toFixed(4)}`);
+
+      if (disabled) return;
 
       // Check which region was clicked
       for (const [regionId, bounds] of Object.entries(regionBounds)) {
         const [[minLat, minLng], [maxLat, maxLng]] = bounds;
         if (lat >= minLat && lat <= maxLat && lng >= minLng && lng <= maxLng) {
+          console.log(`[DEBUG] Matched region: ${regionId}`);
           // Check if already guessed
           if (!guessHistory.some(g => g.regionId === regionId)) {
             onRegionClick(regionId);
@@ -61,6 +82,7 @@ function MapClickHandler({ onRegionClick, disabled, guessHistory }) {
           return;
         }
       }
+      console.log('[DEBUG] No region matched at this location');
     }
   });
   return null;
@@ -69,8 +91,6 @@ function MapClickHandler({ onRegionClick, disabled, guessHistory }) {
 function OSRSMap({ onRegionSelect, guessHistory, disabled }) {
   const [hoveredRegion, setHoveredRegion] = useState(null);
   const [expandedCategory, setExpandedCategory] = useState(null);
-  const mapId = useId();
-
   const specialCategories = getSpecialLocationsByCategory();
 
   // Get the temperature status for a region based on guess history
@@ -131,13 +151,13 @@ function OSRSMap({ onRegionSelect, guessHistory, disabled }) {
     return { ...baseStyle, color: 'transparent', fillColor: 'transparent', fillOpacity: 0 };
   };
 
-  // Explv's OSRS map tiles from GitHub
-  const tileUrl = 'https://raw.githubusercontent.com/Explv/osrs_map_tiles/master/0/{z}/{x}/{y}.png';
+  // Overworld-only OSRS map tiles
+  const tileUrl = 'https://raw.githubusercontent.com/davsan56/OSRSGuesser/main/public/osrsmap/{z}/{x}/{y}.png';
 
   // Map bounds (prevents panning too far)
   const mapBounds = L.latLngBounds(
-    L.latLng(-200, -50),
-    L.latLng(50, 200)
+    L.latLng(-102, 0),
+    L.latLng(0, 144)
   );
 
   return (
@@ -146,8 +166,7 @@ function OSRSMap({ onRegionSelect, guessHistory, disabled }) {
       <div className="osrs-map-section">
         <div className="osrs-map-container">
           <MapContainer
-            key={mapId}
-            center={[-70, 55]}
+            center={[-51, 72]}
             zoom={5}
             minZoom={3}
             maxZoom={7}
@@ -160,7 +179,6 @@ function OSRSMap({ onRegionSelect, guessHistory, disabled }) {
           >
             <TileLayer
               url={tileUrl}
-              tms={true}
               minZoom={3}
               maxZoom={7}
               noWrap={true}

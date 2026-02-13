@@ -374,24 +374,6 @@ export const specialLocations = {
     category: REGION_CATEGORIES.OTHER,
     nearbyRegions: []
   },
-  underground: {
-    id: "underground",
-    name: "Underground/Dungeons",
-    category: REGION_CATEGORIES.OTHER,
-    nearbyRegions: ["catacombs_of_kourend"]
-  },
-  catacombs_of_kourend: {
-    id: "catacombs_of_kourend",
-    name: "Catacombs of Kourend",
-    category: REGION_CATEGORIES.OTHER,
-    nearbyRegions: ["underground"]
-  },
-  various: {
-    id: "various",
-    name: "Various Locations",
-    category: REGION_CATEGORIES.OTHER,
-    nearbyRegions: []
-  }
 };
 
 // Mapping from music track locations to region IDs
@@ -464,7 +446,6 @@ export const locationToRegion = {
   "Lovakengj": "lovakengj",
   "Shayzien": "shayzien",
   "Piscarilius": "piscarilius",
-  "Catacombs of Kourend": "catacombs_of_kourend",
 
   // Raids
   "Chambers of Xeric": "chambers_of_xeric",
@@ -495,17 +476,8 @@ export const locationToRegion = {
   // Other/Special
   "Login screen": "login_screen",
   "Player-owned house": "player_owned_house",
-  "Underground areas": "underground",
-  "Various dungeons": "underground",
-  "Various temples": "various",
-  "Various quest areas": "various",
-  "Quest complete": "various",
-  "Combat areas": "various",
   "Starting areas": "lumbridge",
-  "Various": "various",
-  "Mining areas": "various",
-  "Farming Guild": "hosidius",
-  "Christmas event": "login_screen"
+  "Farming Guild": "hosidius"
 };
 
 // Get all regions (both map and special)

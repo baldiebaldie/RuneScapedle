@@ -52,7 +52,6 @@ export const musicTracks = [
   { name: "Baroque", url: "Baroque.ogg", location: "Ardougne" },
   { name: "Forthcoming", url: "Forthcoming.ogg", location: "Ardougne" },
   { name: "Expanse", url: "Expanse.ogg", location: "Ardougne" },
-  { name: "Medieval", url: "Medieval.ogg", location: "Ardougne" },
   { name: "Magic Dance", url: "Magic_Dance.ogg", location: "Yanille" },
 
   // Catherby & Seers
@@ -68,7 +67,7 @@ export const musicTracks = [
   { name: "Alone", url: "Alone.ogg", location: "Mort Myre Swamp" },
   { name: "Mausoleum", url: "Mausoleum.ogg", location: "Barrows" },
   { name: "Barrows", url: "Barrows.ogg", location: "Barrows" },
-  { name: "Theatre of Blood", url: "Theatre_of_Blood.ogg", location: "Theatre of Blood" },
+  { name: "Welcome to the Theatre", url: "Welcome_to_the_Theatre.ogg", location: "Theatre of Blood" },
 
   // Fremennik
   { name: "Rellekka", url: "Rellekka.ogg", location: "Rellekka" },
@@ -88,68 +87,55 @@ export const musicTracks = [
   { name: "Ice Melody", url: "Ice_Melody.ogg", location: "Ice Path" },
 
   // Kourend
-  { name: "Hosidius", url: "Hosidius.ogg", location: "Hosidius" },
-  { name: "Arceuus", url: "Arceuus.ogg", location: "Arceuus" },
-  { name: "Lovakengj", url: "Lovakengj.ogg", location: "Lovakengj" },
-  { name: "Shayzien", url: "Shayzien.ogg", location: "Shayzien" },
-  { name: "Piscarilius", url: "Piscarilius.ogg", location: "Piscarilius" },
-  { name: "The Forsaken", url: "The_Forsaken.ogg", location: "Catacombs of Kourend" },
+  { name: "Arcane", url: "Arcane.ogg", location: "Arceuus" },
+  { name: "Dwarven Domain", url: "Dwarven_Domain.ogg", location: "Lovakengj" },
+  { name: "The Forests of Shayzien", url: "The_Forests_of_Shayzien.ogg", location: "Shayzien" },
+  { name: "Down by the Docks", url: "Down_by_the_Docks.ogg", location: "Piscarilius" },
 
   // Raids & Bosses
-  { name: "Chambers of Xeric", url: "Chambers_of_Xeric.ogg", location: "Chambers of Xeric" },
-  { name: "Fires of Kourend", url: "Fires_of_Kourend.ogg", location: "Chambers of Xeric" },
-  { name: "Tombs of Amascut", url: "Tombs_of_Amascut.ogg", location: "Tombs of Amascut" },
+  { name: "Upper Depths", url: "Upper_Depths.ogg", location: "Chambers of Xeric" },
+  { name: "Fire in the Deep", url: "Fire_in_the_Deep.ogg", location: "Chambers of Xeric" },
+  { name: "Amascut's Promise", url: "Amascut%27s_Promise.ogg", location: "Tombs of Amascut" },
   { name: "Lair of the Basilisk", url: "Lair_of_the_Basilisk.ogg", location: "Basilisk Knights" },
   { name: "Inferno", url: "Inferno.ogg", location: "The Inferno" },
-  { name: "The Nightmare", url: "The_Nightmare.ogg", location: "The Nightmare" },
-  { name: "Zulrah", url: "Zulrah.ogg", location: "Zulrah" },
-  { name: "Vorkath", url: "Vorkath.ogg", location: "Vorkath" },
-  { name: "Corporeal Beast", url: "Corporeal_Beast.ogg", location: "Corporeal Beast" },
-  { name: "God Wars Dungeon", url: "God_Wars_Dungeon.ogg", location: "God Wars Dungeon" },
+  { name: "The Bane of Ashihama", url: "The_Bane_of_Ashihama.ogg", location: "The Nightmare" },
+  { name: "On Thin Ice", url: "On_Thin_Ice.ogg", location: "Vorkath" },
+  { name: "Bane", url: "Bane.ogg", location: "Corporeal Beast" },
+  { name: "Armageddon", url: "Armageddon.ogg", location: "God Wars Dungeon" },
   { name: "Armadyl Alliance", url: "Armadyl_Alliance.ogg", location: "God Wars Dungeon" },
   { name: "Bandos Battalion", url: "Bandos_Battalion.ogg", location: "God Wars Dungeon" },
   { name: "Zamorak Zoo", url: "Zamorak_Zoo.ogg", location: "God Wars Dungeon" },
   { name: "Saradomin Strings", url: "Saradomin_Strings.ogg", location: "God Wars Dungeon" },
 
   // Quests
-  { name: "Attack", url: "Attack.ogg", location: "Combat areas" },
-  { name: "Background", url: "Background.ogg", location: "Underground areas" },
-  { name: "Venture", url: "Venture.ogg", location: "Various quest areas" },
-  { name: "Escape", url: "Escape.ogg", location: "Various quest areas" },
   { name: "Monkey Madness", url: "Monkey_Madness.ogg", location: "Ape Atoll" },
   { name: "Monkey Badness", url: "Monkey_Badness.ogg", location: "Ape Atoll" },
-  { name: "Temple", url: "Temple.ogg", location: "Various temples" },
-  { name: "Underground", url: "Underground.ogg", location: "Various dungeons" },
-  { name: "Ascent", url: "Ascent.ogg", location: "Various quest areas" },
-  { name: "Overture", url: "Overture.ogg", location: "Quest complete" },
 
   // Minigames
   { name: "Pest Control", url: "Pest_Control.ogg", location: "Pest Control" },
   { name: "Fight Cave", url: "Fight_Cave.ogg", location: "Fight Caves" },
-  { name: "Barbarian Assault", url: "Barbarian_Assault.ogg", location: "Barbarian Assault" },
+  { name: "Assault and Battery", url: "Assault_and_Battery.ogg", location: "Barbarian Assault" },
   { name: "Castle Wars", url: "Castle_Wars.ogg", location: "Castle Wars" },
   { name: "Trouble Brewing", url: "Trouble_Brewing.ogg", location: "Trouble Brewing" },
-  { name: "Wintertodt", url: "Wintertodt.ogg", location: "Wintertodt" },
-  { name: "Tempoross", url: "Tempoross.ogg", location: "Tempoross" },
+  { name: "The Doors of Dinh", url: "The_Doors_of_Dinh.ogg", location: "Wintertodt" },
+  { name: "Tempor of the Storm", url: "Tempor_of_the_Storm.ogg", location: "Tempoross" },
   { name: "Soul Wars", url: "Soul_Wars.ogg", location: "Soul Wars" },
   { name: "Guardians of the Rift", url: "Guardians_of_the_Rift.ogg", location: "Guardians of the Rift" },
 
   // Skills & Activities
   { name: "Country Jig", url: "Country_Jig.ogg", location: "Farming Guild" },
-  { name: "Work Work Work", url: "Work_Work_Work.ogg", location: "Mining areas" },
   { name: "Start", url: "Start.ogg", location: "Starting areas" },
-  { name: "Long Way Home", url: "Long_Way_Home.ogg", location: "Various" },
   { name: "Home Sweet Home", url: "Home_Sweet_Home.ogg", location: "Player-owned house" },
   { name: "My Arm's Journey", url: "My_Arm%27s_Journey.ogg", location: "Weiss" },
 
   // Iconic & Popular
   { name: "Scape Main", url: "Scape_Main.ogg", location: "Login screen" },
   { name: "Scape Original", url: "Scape_Original.ogg", location: "Login screen" },
-  { name: "Scape Santa", url: "Scape_Santa.ogg", location: "Christmas event" },
+
   { name: "Scape Wild", url: "Scape_Wild.ogg", location: "Wilderness" },
   { name: "Coil", url: "Coil.ogg", location: "Zulrah" },
   { name: "Malady", url: "Malady.ogg", location: "Theatre of Blood" },
-  { name: "Predator Xeric", url: "Predator_Xeric.ogg", location: "Chambers of Xeric" },
+  { name: "Lower Depths", url: "Lower_Depths.ogg", location: "Chambers of Xeric" },
 ];
 
 export const WIKI_AUDIO_BASE_URL = 'https://oldschool.runescape.wiki/images/';
