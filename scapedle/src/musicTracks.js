@@ -1,5 +1,6 @@
 // Curated list of recognizable OSRS music tracks
 // Each track has: name, url (wiki filename), location (unlock hint)
+// All URLs verified against https://oldschool.runescape.wiki/images/ on 2026-03-03
 
 export const musicTracks = [
   // Tutorial Island & Lumbridge
@@ -33,7 +34,7 @@ export const musicTracks = [
   // Port Sarim & Karamja
   { name: "Sea Shanty", url: "Sea_Shanty.ogg", location: "Port Sarim" },
   { name: "Sea Shanty 2", url: "Sea_Shanty_2.ogg", location: "Port Sarim" },
-  { name: "Jolly-R", url: "Jolly-R.ogg", location: "Port Sarim" },
+  { name: "Jolly-R", url: "Jolly_R.ogg", location: "Port Sarim" },
   { name: "Jungle Island", url: "Jungle_Island.ogg", location: "Karamja" },
   { name: "Landlubber", url: "Landlubber.ogg", location: "Karamja" },
   { name: "High Seas", url: "High_Seas.ogg", location: "Ship to Karamja" },
@@ -45,12 +46,10 @@ export const musicTracks = [
   { name: "Arabian 2", url: "Arabian_2.ogg", location: "Al Kharid" },
   { name: "Arabian 3", url: "Arabian_3.ogg", location: "Al Kharid" },
   { name: "The Desert", url: "The_Desert.ogg", location: "Kharidian Desert" },
-  { name: "Shine", url: "Shine.ogg", location: "Duel Arena" },
-  { name: "Duel Arena", url: "Duel_Arena.ogg", location: "Duel Arena" },
+  { name: "Shine", url: "Shine.ogg", location: "Emir's Arena" },
 
   // Ardougne & Yanille
   { name: "Baroque", url: "Baroque.ogg", location: "Ardougne" },
-  { name: "Forthcoming", url: "Forthcoming.ogg", location: "Ardougne" },
   { name: "Expanse", url: "Expanse.ogg", location: "Ardougne" },
   { name: "Magic Dance", url: "Magic_Dance.ogg", location: "Yanille" },
 
@@ -66,13 +65,13 @@ export const musicTracks = [
   { name: "The Tower", url: "The_Tower.ogg", location: "Slayer Tower" },
   { name: "Alone", url: "Alone.ogg", location: "Mort Myre Swamp" },
   { name: "Mausoleum", url: "Mausoleum.ogg", location: "Barrows" },
-  { name: "Barrows", url: "Barrows.ogg", location: "Barrows" },
+  { name: "Barrows", url: "Grave_Robber_(Barrows).ogg", location: "Barrows" },
   { name: "Welcome to the Theatre", url: "Welcome_to_the_Theatre.ogg", location: "Theatre of Blood" },
 
   // Fremennik
   { name: "Rellekka", url: "Rellekka.ogg", location: "Rellekka" },
   { name: "Norse Code", url: "Norse_Code.ogg", location: "Rellekka" },
-  { name: "Etcetera", url: "Etcetera.ogg", location: "Miscellania" },
+  { name: "Etcetera", url: "Miscellania.ogg", location: "Miscellania" },
   { name: "Borderland", url: "Borderland.ogg", location: "Fremennik Province" },
 
   // Tirannwn & Elves
@@ -91,22 +90,28 @@ export const musicTracks = [
   { name: "Dwarven Domain", url: "Dwarven_Domain.ogg", location: "Lovakengj" },
   { name: "The Forests of Shayzien", url: "The_Forests_of_Shayzien.ogg", location: "Shayzien" },
   { name: "Down by the Docks", url: "Down_by_the_Docks.ogg", location: "Piscarilius" },
+  { name: "Shayzien", url: "March_of_the_Shayzien.ogg", location: "Shayzien" },
+  { name: "Tithe Farm", url: "The_Forlorn_Homestead.ogg", location: "Hosidius" },
+  { name: "Making Waves", url: "Making_Waves.ogg", location: "Piscatoris Fishing Colony" },
 
-  // Varlamore (verify filenames against OSRS Wiki before going live)
-  { name: "Civitas illa Fortis", url: "Civitas_illa_Fortis.ogg", location: "Civitas illa Fortis" },
-  { name: "The Hunter's Call", url: "The_Hunter%27s_Call.ogg", location: "Hunter Guild" },
-  { name: "Colosseum", url: "Colosseum.ogg", location: "Varlamore" },
+  // Varlamore
+  { name: "Civitas illa Fortis", url: "The_City_of_Sun.ogg", location: "Civitas illa Fortis" },
+  { name: "The Hunter's Call", url: "Ready_for_the_Hunt.ogg", location: "Hunter Guild" },
+  { name: "Colosseum", url: "Glorious_Champion_(Fortis_Colosseum).ogg", location: "Varlamore" },
 
-  // Mos Le'Harmless (verify filenames against OSRS Wiki before going live)
-  { name: "Yo-Ho-Ho", url: "Yo-Ho-Ho.ogg", location: "Mos Le'Harmless" },
-  { name: "Pieces of Eight", url: "Pieces_of_Eight.ogg", location: "Mos Le'Harmless" },
-  { name: "Shiver Me Timbers", url: "Shiver_Me_Timbers.ogg", location: "Mos Le'Harmless" },
+  // Mos Le'Harmless
+  { name: "Yo-Ho-Ho", url: "Yo_Ho_Ho!.ogg", location: "Mos Le'Harmless" },
+  { name: "Life's a Beach!", url: "Life%27s_a_Beach!.ogg", location: "Mos Le'Harmless" },
+  { name: "In the Brine", url: "In_the_Brine.ogg", location: "Mos Le'Harmless" },
+  { name: "Distillery Hilarity", url: "Distillery_Hilarity.ogg", location: "Trouble Brewing" },
+  { name: "Cabin Fever", url: "Cabin_Fever.ogg", location: "Mos Le'Harmless" },
 
   // Fossil Island
-  { name: "Fossil Island", url: "Fossil_Island.ogg", location: "Fossil Island" },
-  { name: "Fossil Island 2", url: "Fossil_Island_2.ogg", location: "Mushroom Forest" },
-  { name: "Fossil Island Underground", url: "Fossil_Island_Underground.ogg", location: "Wyvern Cave" },
-  { name: "The Museum", url: "The_Museum.ogg", location: "Museum Camp" },
+  { name: "Fossil Island", url: "Preservation.ogg", location: "Fossil Island" },
+  { name: "Fossil Island 2", url: "Preserved.ogg", location: "Fossil Island" },
+  { name: "Fossil Island Underground", url: "Fossilised.ogg", location: "Wyvern Cave" },
+  { name: "Museum Medley", url: "Museum_Medley.ogg", location: "Museum Camp" },
+  { name: "Fossil Island Volcano", url: "Lava_is_Mine.ogg", location: "Volcanic Mine" },
 
   // Raids & Bosses
   { name: "Upper Depths", url: "Upper_Depths.ogg", location: "Chambers of Xeric" },
@@ -121,7 +126,12 @@ export const musicTracks = [
   { name: "Armadyl Alliance", url: "Armadyl_Alliance.ogg", location: "God Wars Dungeon" },
   { name: "Bandos Battalion", url: "Bandos_Battalion.ogg", location: "God Wars Dungeon" },
   { name: "Zamorak Zoo", url: "Zamorak_Zoo.ogg", location: "God Wars Dungeon" },
-  { name: "Saradomin Strings", url: "Saradomin_Strings.ogg", location: "God Wars Dungeon" },
+  { name: "Saradomin Strings", url: "Strength_of_Saradomin.ogg", location: "God Wars Dungeon" },
+  { name: "Zaros Stirs", url: "The_Ancient_Prison.ogg", location: "God Wars Dungeon" },
+  { name: "Nex", url: "The_Angel%27s_Fury.ogg", location: "God Wars Dungeon" },
+  { name: "Grotesque Guardians", url: "Tempest.ogg", location: "Slayer Tower" },
+  { name: "Of Ice and Fire", url: "Ice_and_Fire.ogg", location: "Theatre of Blood" },
+  { name: "The Leviathan", url: "Colossus_of_the_Deep.ogg", location: "Desert Treasure II" },
 
   // Quests
   { name: "Monkey Madness", url: "Monkey_Madness.ogg", location: "Ape Atoll" },
@@ -155,91 +165,52 @@ export const musicTracks = [
   // Varrock & Edgeville
   { name: "Soundscape", url: "Soundscape.ogg", location: "Varrock" },
   { name: "Overture", url: "Overture.ogg", location: "Varrock" },
-  { name: "Scape Summon", url: "Scape_Summon.ogg", location: "Varrock" },
-  { name: "Edgeville", url: "Edgeville.ogg", location: "Wilderness" },
+  { name: "Edgeville", url: "Forever.ogg", location: "Edgeville" },
 
   // Falador & White Wolf Mountain
   { name: "March", url: "March.ogg", location: "Falador" },
   { name: "Lullaby", url: "Lullaby.ogg", location: "Falador" },
   { name: "Long Way Home", url: "Long_Way_Home.ogg", location: "Falador" },
-  { name: "White Shark", url: "White_Shark.ogg", location: "Camelot" },
 
   // Draynor & Asgarnia
   { name: "Book of Spells", url: "Book_of_Spells.ogg", location: "Draynor Manor" },
-  { name: "Newbie Melody 2", url: "Newbie_Melody_2.ogg", location: "Tutorial Island" },
   { name: "Crystal Sword", url: "Crystal_Sword.ogg", location: "Tirannwn" },
 
   // Karamja & Feldip
-  { name: "The Wild Isle", url: "The_Wild_Isle.ogg", location: "Karamja" },
-  { name: "Feldip Hills", url: "Feldip_Hills.ogg", location: "Karamja" },
+  { name: "The Wild Isle", url: "Wild_Isle.ogg", location: "Karamja" },
   { name: "Reggae", url: "Reggae.ogg", location: "Karamja" },
   { name: "Reggae 2", url: "Reggae_2.ogg", location: "Karamja" },
 
   // Ardougne & West Ardougne
-  { name: "Shadows", url: "Shadows.ogg", location: "Morytania" },
   { name: "Distant Land", url: "Distant_Land.ogg", location: "Ardougne" },
-  { name: "Flute Salad 2", url: "Flute_Salad_2.ogg", location: "Ardougne" },
   { name: "Knightmare", url: "Knightmare.ogg", location: "Camelot" },
   { name: "Witching", url: "Witching.ogg", location: "Ardougne" },
 
   // Fremennik & Daemonheim
   { name: "Lament", url: "Lament.ogg", location: "Fremennik Province" },
-  { name: "Nордisk", url: "Nordisk.ogg", location: "Fremennik Province" },
   { name: "Dagannoth Dawn", url: "Dagannoth_Dawn.ogg", location: "Fremennik Province" },
 
-  // Kourend expanded
-  { name: "Shayzien", url: "Shayzien.ogg", location: "Shayzien" },
-  { name: "Lovakite Mining", url: "Lovakite_Mining.ogg", location: "Lovakengj" },
-  { name: "Piscatoris", url: "Piscatoris.ogg", location: "Piscarilius" },
-  { name: "Tithe Farm", url: "Tithe_Farm.ogg", location: "Hosidius" },
-  { name: "The Forsaken Tower", url: "The_Forsaken_Tower.ogg", location: "Lovakengj" },
-
   // God Wars & Bosses
-  { name: "Zaros Stirs", url: "Zaros_Stirs.ogg", location: "God Wars Dungeon" },
-  { name: "Gielinor's Champions", url: "Gielinor%27s_Champions.ogg", location: "God Wars Dungeon" },
   { name: "Eye of the Storm", url: "Eye_of_the_Storm.ogg", location: "God Wars Dungeon" },
-  { name: "Nex", url: "Nex.ogg", location: "God Wars Dungeon" },
   { name: "Dance of the Undead", url: "Dance_of_the_Undead.ogg", location: "Barrows" },
-  { name: "Grotesque Guardians", url: "Grotesque_Guardians.ogg", location: "Slayer Tower" },
-  { name: "Dusk", url: "Dusk.ogg", location: "Corporeal Beast" },
 
   // Raids expanded
-  { name: "Journey's End", url: "Journey%27s_End.ogg", location: "Chambers of Xeric" },
-  { name: "Xeric's Shrine", url: "Xeric%27s_Shrine.ogg", location: "Chambers of Xeric" },
-  { name: "Of Ice and Fire", url: "Of_Ice_and_Fire.ogg", location: "Theatre of Blood" },
   { name: "Strangled", url: "Strangled.ogg", location: "Tombs of Amascut" },
 
   // Wilderness & PvP
-  { name: "Bandstand", url: "Bandstand.ogg", location: "Wilderness" },
   { name: "The Terrible Caverns", url: "The_Terrible_Caverns.ogg", location: "Wilderness" },
-  { name: "King of the Dwarves", url: "King_of_the_Dwarves.ogg", location: "Wilderness" },
   { name: "Wilderness 2", url: "Wilderness_2.ogg", location: "Deep Wilderness" },
   { name: "Wilderness 3", url: "Wilderness_3.ogg", location: "Deep Wilderness" },
 
   // Morytania expanded
-  { name: "Ghosts", url: "Ghosts.ogg", location: "Morytania" },
-  { name: "Werewolf", url: "Werewolf.ogg", location: "Canifis" },
-  { name: "Harmony Island", url: "Harmony_Island.ogg", location: "Harmony Island" },
-  { name: "Mos Le'Harmless", url: "Mos_Le%27Harmless.ogg", location: "Mos Le'Harmless" },
-  { name: "Cabin Fever", url: "Cabin_Fever.ogg", location: "Mos Le'Harmless" },
-
-  // Fossil Island expanded
-  { name: "Fossil Island 3", url: "Fossil_Island_3.ogg", location: "Fossil Island" },
+  { name: "Harmony Island", url: "Zombiism.ogg", location: "Harmony Island" },
 
   // Minigames expanded
   { name: "Barb Wire", url: "Barb_Wire.ogg", location: "Barbarian Assault" },
-  { name: "The Last Stand", url: "The_Last_Stand.ogg", location: "Wintertodt" },
-  { name: "Tempoross Boss", url: "The_Leviathan.ogg", location: "Tempoross" },
-
-  // Quest music
-  { name: "Alone in the Dark", url: "Alone_in_the_Dark.ogg", location: "Morytania" },
-  { name: "The Siren's Lure", url: "The_Siren%27s_Lure.ogg", location: "Fossil Island" },
+  { name: "The Last Stand", url: "Last_Stand.ogg", location: "Wintertodt" },
   { name: "Desert Heat", url: "Desert_Heat.ogg", location: "Kharidian Desert" },
   { name: "Cave of Beasts", url: "Cave_of_Beasts.ogg", location: "Troll Country" },
   { name: "Tribal", url: "Tribal.ogg", location: "Karamja" },
-
-  // Player-owned house & skills
-  { name: "Speakeasy", url: "Speakeasy.ogg", location: "Player-owned house" },
   { name: "Scape Hunter", url: "Scape_Hunter.ogg", location: "Karamja" },
 ];
 

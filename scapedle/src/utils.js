@@ -35,3 +35,7 @@ export const hasMatchingWord = (guessName, targetName) => {
   const targetWords = targetName.toLowerCase().split(/\s+/);
   return guessWords.some(word => targetWords.includes(word));
 };
+
+// Score based on number of guesses: 1→1000, 2→500, 3→250, 4→125, 5→63, 6+→50
+export const calculateScore = (numGuesses) =>
+  Math.max(50, Math.round(1000 * Math.pow(0.5, numGuesses - 1)));

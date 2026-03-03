@@ -625,6 +625,79 @@
   color: #aaa;
 }
 
+/* Daily score panel */
+.daily-score-panel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: #666;
+  letter-spacing: 0.4px;
+  padding: 4px 0 14px;
+}
+
+.daily-score-panel strong {
+  color: #c9a227;
+  font-weight: 600;
+}
+
+.daily-score-panel .score-sep {
+  color: #3a3d44;
+  font-size: 14px;
+}
+
+.daily-score-panel .score-total strong {
+  color: #e0c060;
+}
+
+/* Live score counter (shown while guessing) */
+.score-counter {
+  font-size: 12px;
+  color: #666;
+  letter-spacing: 0.4px;
+  margin-bottom: 10px;
+}
+
+.score-counter strong {
+  color: #c9a227;
+  font-weight: 600;
+}
+
+/* Daily badge pill inside the score panel */
+.daily-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  color: #555;
+  border: 1px solid #333;
+  border-radius: 4px;
+  padding: 1px 5px;
+  margin-right: 2px;
+  text-transform: uppercase;
+}
+
+/* Score line in win message */
+.score-display {
+  color: #c9a227;
+  font-size: 1em;
+  font-weight: 600;
+  margin: 2px 0 8px;
+  letter-spacing: 0.3px;
+}
+
+/* Practice (unlimited) variants — more muted */
+.score-display.score-practice {
+  color: #7a7a7a;
+}
+
+.score-counter.score-counter-practice {
+  color: #555;
+}
+
+.score-counter.score-counter-practice strong {
+  color: #8a7a40;
+}
+
 /* ==========================================
    MOBILE — applies only on screens ≤ 768px
    ========================================== */

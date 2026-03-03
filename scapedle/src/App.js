@@ -3,7 +3,7 @@ import './App.css';
 import { supabase } from './supabase';
 import { musicTracks } from './musicTracks';
 import MusicGame from './MusicGame';
-import { seededRandom, getTodayString, getYesterdayString, getIndicator, getYear, hasMatchingWord } from './utils';
+import { seededRandom, getTodayString, getYesterdayString, getIndicator, getYear, hasMatchingWord, calculateScore } from './utils';
 
 const fetchDailyWord = async (dateString) => {
   const { data, error } = await supabase
@@ -63,6 +63,10 @@ function App() {
   const [unlimitedWon, setUnlimitedWon] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [yesterdayItem, setYesterdayItem] = useState(null);
+
+  // Daily scores (null = not yet won today)
+  const [dailyItemsScore, setDailyItemsScore] = useState(null);
+  const [dailyMusicScore, setDailyMusicScore] = useState(null);
 
   // Main game type: 'items' or 'music'
   const [gameType, setGameType] = useState('items');
@@ -146,11 +150,18 @@ function App() {
             .filter(Boolean);
           setDailyGuesses(restoredGuesses);
           setDailyWon(savedWon);
+
+          const savedItemsScore = localStorage.getItem('scapedle-daily-items-score');
+          if (savedItemsScore !== null) setDailyItemsScore(Number(savedItemsScore));
+          const savedMusicScore = localStorage.getItem('scapedle-daily-music-score');
+          if (savedMusicScore !== null) setDailyMusicScore(Number(savedMusicScore));
         } else {
           // New day - clear old data
           localStorage.setItem('scapedle-daily-date', today);
           localStorage.setItem('scapedle-daily-guesses', '[]');
           localStorage.setItem('scapedle-daily-won', 'false');
+          localStorage.removeItem('scapedle-daily-items-score');
+          localStorage.removeItem('scapedle-daily-music-score');
         }
 
         // Generate daily song locally using seeded random
@@ -241,8 +252,11 @@ function App() {
       localStorage.setItem('scapedle-daily-guesses', JSON.stringify(newGuesses.map(g => g.id)));
 
       if (item.id === dailyTarget.id) {
+        const score = calculateScore(newGuesses.length);
         setDailyWon(true);
+        setDailyItemsScore(score);
         localStorage.setItem('scapedle-daily-won', 'true');
+        localStorage.setItem('scapedle-daily-items-score', String(score));
       }
     } else {
       const newGuesses = [...unlimitedGuesses, item];
@@ -348,6 +362,8 @@ function App() {
                   </ul>
                   <h4>Arrows:</h4>
                   <p>↑ means the target value is higher. ↓ means the target value is lower.</p>
+                  <h4>Scoring:</h4>
+                  <p>Guess on your first try for <strong>1,000 pts</strong>. Each wrong guess halves your potential score — 500, 250, 125... down to a minimum of 50. Only your daily game counts toward today's total.</p>
                 </>
               ) : (
                 <>
@@ -358,16 +374,10 @@ function App() {
                     <li>Click a region on the map, or pick one from the Special Locations panel.</li>
                     <li>Press <strong>Confirm Guess</strong> to submit.</li>
                   </ol>
-                  <h4>Temperature feedback:</h4>
-                  <ul>
-                    <li>🟢 <strong>Correct!</strong> — That's the exact region.</li>
-                    <li>🔴 <strong>Hot</strong> — Same area, very close region.</li>
-                    <li>🟠 <strong>Warm</strong> — Same broad area, different region.</li>
-                    <li>🔵 <strong>Cold</strong> — Different area of the game.</li>
-                    <li>❄️ <strong>Frozen</strong> — Very far off (e.g., overworld vs. a raid).</li>
-                  </ul>
                   <h4>Special Locations:</h4>
                   <p>Use the panel beside the map for instanced areas like raids, bosses, and minigames that don't appear on the main map.</p>
+                  <h4>Scoring:</h4>
+                  <p>Guess on your first try for <strong>1,000 pts</strong>. Each wrong guess halves your potential score — 500, 250, 125... down to a minimum of 50. Only your daily game counts toward today's total.</p>
                 </>
               )}
             </div>
@@ -399,6 +409,16 @@ function App() {
             >
               Music
             </button>
+          </div>
+
+          {/* Daily Score Panel */}
+          <div className="daily-score-panel">
+            <span className="daily-badge">DAILY</span>
+            <span>Items <strong>{dailyItemsScore !== null ? `${dailyItemsScore} pts` : '—'}</strong></span>
+            <span className="score-sep">·</span>
+            <span>Music <strong>{dailyMusicScore !== null ? `${dailyMusicScore} pts` : '—'}</strong></span>
+            <span className="score-sep">·</span>
+            <span className="score-total">Total <strong>{(dailyItemsScore !== null || dailyMusicScore !== null) ? `${(dailyItemsScore ?? 0) + (dailyMusicScore ?? 0)} pts` : '—'}</strong></span>
           </div>
 
           {gameType === 'items' ? (
@@ -447,6 +467,9 @@ function App() {
                     {targetItem.name}
                   </h2>
                   <p>Guesses: {guesses.length}</p>
+                  <p className={`score-display ${gameMode === 'unlimited' ? 'score-practice' : ''}`}>
+                    {gameMode === 'daily' ? 'Daily score' : 'Practice score'}: {calculateScore(guesses.length)} pts
+                  </p>
                   {gameMode === 'unlimited' && (
                     <button className="play-again-btn" onClick={handlePlayAgain}>
                       Play Again
@@ -454,7 +477,11 @@ function App() {
                   )}
                 </div>
               ) : (
-                <div className="search-container">
+                <>
+                  <div className={`score-counter ${gameMode === 'unlimited' ? 'score-counter-practice' : ''}`}>
+                    {gameMode === 'daily' ? 'Daily' : 'Practice'} — guess now: <strong>{calculateScore(guesses.length + 1)} pts</strong>
+                  </div>
+                  <div className="search-container">
                   <input
                     type="text"
                     value={inputValue}
@@ -470,7 +497,8 @@ function App() {
                       ))}
                     </div>
                   )}
-                </div>
+                  </div>
+                </>
               )}
 
               {guesses.length > 0 && targetItem && (
@@ -495,6 +523,7 @@ function App() {
               yesterdaySong={yesterdaySong}
               setUnlimitedSong={setUnlimitedSong}
               initialDailyWon={initialSongWon}
+              onDailySongWon={(score) => setDailyMusicScore(score)}
             />
           )}
         </div>

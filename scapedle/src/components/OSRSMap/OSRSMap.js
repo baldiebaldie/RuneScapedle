@@ -5,7 +5,6 @@ import 'leaflet/dist/leaflet.css';
 import {
   getSpecialLocationsByCategory,
   getRegionById,
-  getTemperatureColor,
   getCategoryDisplayName,
   regionAliases,
   TEMPERATURE,
@@ -174,14 +173,6 @@ function OSRSMap({ onRegionSelect, guessHistory, disabled }) {
     setExpandedCategory(expandedCategory === category ? null : category);
   };
 
-  const getLastGuessCategoryMatch = () => {
-    if (guessHistory.length === 0) return null;
-    const lastGuess = guessHistory[guessHistory.length - 1];
-    return lastGuess.categoryMatch ? lastGuess.category : null;
-  };
-
-  const highlightedCategory = getLastGuessCategoryMatch();
-
   // Overworld-only OSRS map tiles (OSRSGuesser tileset, calibrated to regionBounds below)
   // TODO: switch to an updated tileset that includes Varlamore once one is verified
   const tileUrl = 'https://raw.githubusercontent.com/davsan56/OSRSGuesser/main/public/osrsmap/{z}/{x}/{y}.png';
@@ -238,24 +229,25 @@ function OSRSMap({ onRegionSelect, guessHistory, disabled }) {
               </Marker>
             )}
 
-            {/* Previous guess pins (colored by temperature) */}
+            {/* Previous guess pins */}
             {guessHistory.map((guess, idx) => {
               if (!guess.pinLatLng) return null;
+              const pinColor = guess.temperature === TEMPERATURE.CORRECT ? '#4caf50' : '#888';
               return (
                 <CircleMarker
                   key={idx}
                   center={[guess.pinLatLng.lat, guess.pinLatLng.lng]}
                   radius={6}
                   pathOptions={{
-                    color: getTemperatureColor(guess.temperature),
-                    fillColor: getTemperatureColor(guess.temperature),
+                    color: pinColor,
+                    fillColor: pinColor,
                     fillOpacity: 0.8,
                     weight: 2
                   }}
                 >
                   <Popup closeButton={false}>
                     <span className="region-popup">
-                      {guess.regionName} - {guess.message}
+                      {guess.regionName}
                     </span>
                   </Popup>
                 </CircleMarker>
@@ -302,13 +294,9 @@ function OSRSMap({ onRegionSelect, guessHistory, disabled }) {
 
           const isExpanded = expandedCategory === category;
           const categoryKey = category.toUpperCase();
-          const isHighlighted = highlightedCategory === REGION_CATEGORIES[categoryKey];
 
           return (
-            <div
-              key={category}
-              className={`special-category ${isHighlighted ? 'highlighted' : ''}`}
-            >
+            <div key={category} className="special-category">
               <button
                 className="category-header"
                 onClick={() => toggleCategory(category)}
@@ -327,9 +315,9 @@ function OSRSMap({ onRegionSelect, guessHistory, disabled }) {
                     return (
                       <button
                         key={loc.id}
-                        className={`special-location-btn ${isGuessed ? `guessed ${status}` : ''} ${isCorrect ? 'correct' : ''} ${disabled ? 'disabled' : ''}`}
+                        className={`special-location-btn ${isGuessed ? 'guessed' : ''} ${isCorrect ? 'correct' : ''} ${disabled ? 'disabled' : ''}`}
                         style={{
-                          backgroundColor: isGuessed ? getTemperatureColor(status) : undefined
+                          backgroundColor: isCorrect ? '#4caf50' : isGuessed ? '#555' : undefined
                         }}
                         onClick={() => handleRegionClick(loc.id)}
                         disabled={disabled || isGuessed}
@@ -349,39 +337,20 @@ function OSRSMap({ onRegionSelect, guessHistory, disabled }) {
       {guessHistory.length > 0 && (
         <div className="guess-history">
           <h4>Your Guesses:</h4>
-          {guessHistory.map((guess, idx) => (
-            <div
-              key={idx}
-              className={`guess-row ${guess.temperature}`}
-              style={{ borderLeftColor: getTemperatureColor(guess.temperature) }}
-            >
-              <span className="guess-region">{guess.regionName}</span>
-              <span
-                className="guess-temp"
-                style={{ color: getTemperatureColor(guess.temperature) }}
+          {guessHistory.map((guess, idx) => {
+            const isCorrect = guess.temperature === TEMPERATURE.CORRECT;
+            return (
+              <div
+                key={idx}
+                className="guess-row"
+                style={{ borderLeftColor: isCorrect ? '#4caf50' : '#555' }}
               >
-                {guess.message}
-              </span>
-            </div>
-          ))}
+                <span className="guess-region">#{idx + 1} {guess.regionName}</span>
+              </div>
+            );
+          })}
         </div>
       )}
-
-      {/* Temperature Legend */}
-      <div className="temperature-legend">
-        <div className="legend-item">
-          <span className="legend-color" style={{ backgroundColor: getTemperatureColor(TEMPERATURE.HOT) }}></span>
-          <span>Hot (Very close!)</span>
-        </div>
-        <div className="legend-item">
-          <span className="legend-color" style={{ backgroundColor: getTemperatureColor(TEMPERATURE.WARM) }}></span>
-          <span>Warm (Right category)</span>
-        </div>
-        <div className="legend-item">
-          <span className="legend-color" style={{ backgroundColor: getTemperatureColor(TEMPERATURE.COLD) }}></span>
-          <span>Cold (Wrong category)</span>
-        </div>
-      </div>
     </div>
   );
 }

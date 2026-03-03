@@ -7,6 +7,7 @@ import {
   calculateTemperature,
   TEMPERATURE
 } from './data/mapRegions';
+import { calculateScore } from './utils';
 
 const audioUrlCache = {};
 
@@ -27,7 +28,7 @@ async function resolveWikiAudioUrl(filename) {
   }
 }
 
-function MusicGame({ dailySong, unlimitedSong, yesterdaySong, setUnlimitedSong, initialDailyWon }) {
+function MusicGame({ dailySong, unlimitedSong, yesterdaySong, setUnlimitedSong, initialDailyWon, onDailySongWon }) {
   const [musicMode, setMusicMode] = useState('daily');
   const [dailyGuessHistory, setDailyGuessHistory] = useState([]);
   const [unlimitedGuessHistory, setUnlimitedGuessHistory] = useState([]);
@@ -88,8 +89,11 @@ function MusicGame({ dailySong, unlimitedSong, yesterdaySong, setUnlimitedSong, 
       localStorage.setItem('scapedle-daily-region-guesses', JSON.stringify(newHistory));
 
       if (tempResult.temperature === TEMPERATURE.CORRECT) {
+        const score = calculateScore(newHistory.length);
         setDailySongWon(true);
         localStorage.setItem('scapedle-daily-song-won', 'true');
+        localStorage.setItem('scapedle-daily-music-score', String(score));
+        if (onDailySongWon) onDailySongWon(score);
         if (audioRef.current) {
           audioRef.current.pause();
           setIsPlaying(false);
@@ -232,6 +236,9 @@ function MusicGame({ dailySong, unlimitedSong, yesterdaySong, setUnlimitedSong, 
           <h2>{currentSong?.name}</h2>
           <p className="location-hint">Unlocks: {currentSong?.location}</p>
           <p>Guesses: {guessHistory.length}</p>
+          <p className={`score-display ${musicMode === 'unlimited' ? 'score-practice' : ''}`}>
+            {musicMode === 'daily' ? 'Daily score' : 'Practice score'}: {calculateScore(guessHistory.length)} pts
+          </p>
           {musicMode === 'unlimited' && (
             <button className="play-again-btn" onClick={handleSongPlayAgain}>
               Play Again
@@ -239,11 +246,16 @@ function MusicGame({ dailySong, unlimitedSong, yesterdaySong, setUnlimitedSong, 
           )}
         </div>
       ) : (
-        <OSRSMap
-          onRegionSelect={handleRegionGuess}
-          guessHistory={guessHistory}
-          disabled={songWon}
-        />
+        <>
+          <div className={`score-counter ${musicMode === 'unlimited' ? 'score-counter-practice' : ''}`}>
+            {musicMode === 'daily' ? 'Daily' : 'Practice'} — guess now: <strong>{calculateScore(guessHistory.length + 1)} pts</strong>
+          </div>
+          <OSRSMap
+            onRegionSelect={handleRegionGuess}
+            guessHistory={guessHistory}
+            disabled={songWon}
+          />
+        </>
       )}
     </>
   );
