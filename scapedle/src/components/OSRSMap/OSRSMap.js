@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MapContainer, TileLayer, Marker, CircleMarker, Popup, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import {
@@ -22,6 +22,18 @@ const createPinIcon = (color = '#e53935') => L.divIcon({
   iconSize: [24, 36],
   iconAnchor: [12, 36],
   popupAnchor: [0, -36]
+});
+
+// Smaller, semi-transparent pin for confirmed past guesses
+const createHistoryPinIcon = (color = '#888888') => L.divIcon({
+  className: 'custom-map-pin',
+  html: `<svg width="18" height="27" viewBox="0 0 24 36" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 0C5.4 0 0 5.4 0 12c0 9 12 24 12 24s12-15 12-24C24 5.4 18.6 0 12 0z" fill="${color}" stroke="#000" stroke-width="1.5" opacity="0.8"/>
+    <circle cx="12" cy="12" r="5" fill="white" opacity="0.55"/>
+  </svg>`,
+  iconSize: [18, 27],
+  iconAnchor: [9, 27],
+  popupAnchor: [0, -27]
 });
 
 // OSRS map bounds for regions (in Leaflet coordinates for CRS.Simple)
@@ -232,25 +244,19 @@ function OSRSMap({ onRegionSelect, guessHistory, disabled }) {
             {/* Previous guess pins */}
             {guessHistory.map((guess, idx) => {
               if (!guess.pinLatLng) return null;
-              const pinColor = guess.temperature === TEMPERATURE.CORRECT ? '#4caf50' : '#888';
+              const pinColor = guess.temperature === TEMPERATURE.CORRECT ? '#4caf50' : '#888888';
               return (
-                <CircleMarker
+                <Marker
                   key={idx}
-                  center={[guess.pinLatLng.lat, guess.pinLatLng.lng]}
-                  radius={6}
-                  pathOptions={{
-                    color: pinColor,
-                    fillColor: pinColor,
-                    fillOpacity: 0.8,
-                    weight: 2
-                  }}
+                  position={[guess.pinLatLng.lat, guess.pinLatLng.lng]}
+                  icon={createHistoryPinIcon(pinColor)}
                 >
                   <Popup closeButton={false}>
                     <span className="region-popup">
                       {guess.regionName}
                     </span>
                   </Popup>
-                </CircleMarker>
+                </Marker>
               );
             })}
           </MapContainer>

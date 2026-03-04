@@ -28,7 +28,7 @@ async function resolveWikiAudioUrl(filename) {
   }
 }
 
-function MusicGame({ dailySong, unlimitedSong, yesterdaySong, setUnlimitedSong, initialDailyWon, onDailySongWon }) {
+function MusicGame({ dailySong, unlimitedSong, yesterdaySong, setUnlimitedSong, initialDailyWon, onDailySongWon, onGuessResult }) {
   const [musicMode, setMusicMode] = useState('daily');
   const [dailyGuessHistory, setDailyGuessHistory] = useState([]);
   const [unlimitedGuessHistory, setUnlimitedGuessHistory] = useState([]);
@@ -83,12 +83,15 @@ function MusicGame({ dailySong, unlimitedSong, yesterdaySong, setUnlimitedSong, 
       pinLatLng: pinLatLng || null
     };
 
+    const isCorrect = tempResult.temperature === TEMPERATURE.CORRECT;
+    if (onGuessResult) onGuessResult(isCorrect ? 'correct' : 'wrong');
+
     if (musicMode === 'daily') {
       const newHistory = [...dailyGuessHistory, newGuess];
       setDailyGuessHistory(newHistory);
       localStorage.setItem('scapedle-daily-region-guesses', JSON.stringify(newHistory));
 
-      if (tempResult.temperature === TEMPERATURE.CORRECT) {
+      if (isCorrect) {
         const score = calculateScore(newHistory.length);
         setDailySongWon(true);
         localStorage.setItem('scapedle-daily-song-won', 'true');
@@ -103,7 +106,7 @@ function MusicGame({ dailySong, unlimitedSong, yesterdaySong, setUnlimitedSong, 
       const newHistory = [...unlimitedGuessHistory, newGuess];
       setUnlimitedGuessHistory(newHistory);
 
-      if (tempResult.temperature === TEMPERATURE.CORRECT) {
+      if (isCorrect) {
         setUnlimitedSongWon(true);
         if (audioRef.current) {
           audioRef.current.pause();

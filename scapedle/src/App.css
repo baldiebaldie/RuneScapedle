@@ -324,6 +324,30 @@
   transform: translateY(0);
 }
 
+/* Flash overlay — child of game-container, never touches game-container's own animation */
+.flash-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes flashWrong {
+  0%   { background: transparent; box-shadow: inset 0 0 0px rgba(198, 40, 40, 0); outline: 2px solid transparent; }
+  20%  { background: rgba(198, 40, 40, 0.06); box-shadow: inset 0 0 40px rgba(198, 40, 40, 0.25); outline: 2px solid rgba(198, 40, 40, 0.4); }
+  100% { background: transparent; box-shadow: inset 0 0 0px rgba(198, 40, 40, 0); outline: 2px solid transparent; }
+}
+
+@keyframes flashCorrect {
+  0%   { background: transparent; box-shadow: inset 0 0 0px rgba(76, 175, 80, 0); outline: 2px solid transparent; }
+  20%  { background: rgba(76, 175, 80, 0.06); box-shadow: inset 0 0 40px rgba(76, 175, 80, 0.25); outline: 2px solid rgba(76, 175, 80, 0.4); }
+  100% { background: transparent; box-shadow: inset 0 0 0px rgba(76, 175, 80, 0); outline: 2px solid transparent; }
+}
+
+.flash-overlay.flash-wrong  { animation: flashWrong  0.8s ease-out; }
+.flash-overlay.flash-correct { animation: flashCorrect 0.8s ease-out; }
+
 /* Scrollbar styling */
 .suggestions::-webkit-scrollbar,
 .guess-table::-webkit-scrollbar {

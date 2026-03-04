@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './App.css';
 import { supabase } from './supabase';
 import { musicTracks } from './musicTracks';
@@ -71,6 +71,18 @@ function App() {
 
   // Main game type: 'items' or 'music'
   const [gameType, setGameType] = useState('items');
+
+  // Flash feedback via an overlay child div — never touches game-container's own animation
+  const gameContainerRef = useRef(null);
+  const flashOverlayRef = useRef(null);
+
+  const handleGuessResult = (result) => {
+    const el = flashOverlayRef.current;
+    if (!el) return;
+    const cls = result === 'correct' ? 'flash-correct' : 'flash-wrong';
+    el.classList.add(cls);
+    setTimeout(() => el.classList.remove(cls), 800);
+  };
 
   // Music mode state (passed to MusicGame component)
   const [dailySong, setDailySong] = useState(null);
@@ -247,6 +259,9 @@ function App() {
   const handleGuess = (item) => {
     if (guesses.find(g => g.id === item.id)) return;
 
+    const isCorrect = item.id === targetItem.id;
+    handleGuessResult(isCorrect ? 'correct' : 'wrong');
+
     if (gameMode === 'daily') {
       const newGuesses = [...dailyGuesses, item];
       setDailyGuesses(newGuesses);
@@ -345,7 +360,8 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <div className="game-container">
+        <div ref={gameContainerRef} className="game-container">
+          <div ref={flashOverlayRef} className="flash-overlay" />
           <div className="help-button" onClick={() => setShowHelp(!showHelp)}>
             ?
           </div>
@@ -531,6 +547,7 @@ function App() {
               setUnlimitedSong={setUnlimitedSong}
               initialDailyWon={initialSongWon}
               onDailySongWon={(score) => { setDailyMusicScore(score); setInitialSongWon(true); }}
+              onGuessResult={handleGuessResult}
             />
           )}
         </div>
