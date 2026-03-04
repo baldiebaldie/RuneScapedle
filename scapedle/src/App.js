@@ -523,7 +523,7 @@ function App() {
               yesterdaySong={yesterdaySong}
               setUnlimitedSong={setUnlimitedSong}
               initialDailyWon={initialSongWon}
-              onDailySongWon={(score) => setDailyMusicScore(score)}
+              onDailySongWon={(score) => { setDailyMusicScore(score); setInitialSongWon(true); }}
             />
           )}
         </div>
