@@ -76,7 +76,9 @@ const regionBounds = {
 
   // Northern areas — fremennik BEFORE troll_country so Rellekka (east fremennik) wins
   fremennik: [[-30.2, 49.3], [-5.5, 82.8]],
-  troll_country: [[-32, 82.6], [-14.9, 89.8]],
+  // Burthorpe listed before troll_country so it takes click priority
+  burthorpe: [[-32.9, 85.2], [-28.4, 92.4]],
+  troll_country: [[-28.4, 82.6], [-14.9, 92.3]],
 
   // Southern areas
   giant_conch: [[-89.6, 97.5], [-77.6, 111.1]],
@@ -93,7 +95,7 @@ const regionBounds = {
   morytania: [[-50, 114], [-30, 135]],
   desert: [[-75, 100], [-50, 120]],
   varlamore: [[-65.5, 10.9], [-41.8, 42]],
-  wilderness: [[-32, 90], [-13.3, 118.3]],
+  wilderness: [[-32.1, 92.6], [-11.9, 114]],
 };
 
 // Resolve a lat/lng coordinate to the nearest region ID

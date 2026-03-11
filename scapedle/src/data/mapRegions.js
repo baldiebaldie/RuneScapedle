@@ -175,13 +175,22 @@ export const mapRegions = {
     nearbyRegions: ["ardougne"]
   },
 
+  // Burthorpe
+  burthorpe: {
+    id: "burthorpe",
+    name: "Burthorpe",
+    category: REGION_CATEGORIES.OVERWORLD,
+    bounds: { x: 14, y: 32, width: 8, height: 5 },
+    nearbyRegions: ["falador", "troll_country", "camelot"]
+  },
+
   // Troll Country
   troll_country: {
     id: "troll_country",
     name: "Troll Country",
     category: REGION_CATEGORIES.OVERWORLD,
     bounds: { x: 14, y: 32, width: 8, height: 10 },
-    nearbyRegions: ["fremennik", "falador", "weiss"]
+    nearbyRegions: ["fremennik", "falador", "weiss", "burthorpe"]
   },
 
   // Ape Atoll
@@ -601,7 +610,7 @@ export const locationToRegion = {
 
   // Falador / Asgarnia sub-locations
   "North of Falador": "falador",
-  "Burthorpe": "troll_country",
+  "Burthorpe": "burthorpe",
   "Farm South of Falador": "falador",
   "Edgeville Monastery": "falador",
   "Rimmington": "port_sarim",
